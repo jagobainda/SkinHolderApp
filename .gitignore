@@ -1,0 +1,35 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Local configuration
+local.properties
+*.keystore
+*.jks
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Native builds
+.cxx/
+.externalNativeBuild/
+
+# Captures
+captures/
+
+# Logs
+*.log
+
+# Kotlin build cache
+.kotlinc/
+
+# Misc
+*.hprof
