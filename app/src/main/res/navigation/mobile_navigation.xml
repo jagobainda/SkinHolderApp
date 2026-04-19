@@ -7,19 +7,33 @@
 
     <fragment
         android:id="@+id/navigation_home"
+<<<<<<< HEAD
         android:name="com.src.skinholderapp.ui.home.HomeFragment"
+=======
+        android:name="dev.jagoba.skinholder.views.home.HomeFragment"
+>>>>>>> b70b825a8c72a68be7180cb96879a7473c3462d0
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
+<<<<<<< HEAD
         android:name="com.example.skinholderapp.ui.dashboard.DashboardFragment"
         android:label="@string/title_items"
+=======
+        android:name="dev.jagoba.skinholder.views.dashboard.DashboardFragment"
+        android:label="@string/title_dashboard"
+>>>>>>> b70b825a8c72a68be7180cb96879a7473c3462d0
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
+<<<<<<< HEAD
         android:name="com.example.skinholderapp.ui.notifications.NotificationsFragment"
         android:label="@string/title_registros"
+=======
+        android:name="dev.jagoba.skinholder.views.notifications.NotificationsFragment"
+        android:label="@string/title_notifications"
+>>>>>>> b70b825a8c72a68be7180cb96879a7473c3462d0
         tools:layout="@layout/fragment_notifications" />
 </navigation>

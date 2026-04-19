@@ -2,8 +2,13 @@
     <!-- Base application theme. -->
     <style name="Theme.SkinHolderApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
+<<<<<<< HEAD
         <item name="colorPrimary">@color/verde_lima</item>
         <item name="colorPrimaryVariant">@color/verde_lima</item>
+=======
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+>>>>>>> b70b825a8c72a68be7180cb96879a7473c3462d0
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
