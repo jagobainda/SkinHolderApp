@@ -57,6 +57,8 @@ class UserItemsFragment : Fragment(), UserItemActions {
     }
 
     private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setColorSchemeResources(R.color.primary)
+        binding.swipeRefresh.setProgressBackgroundColorSchemeResource(R.color.surface_container)
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.refresh()
         }

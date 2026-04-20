@@ -9,6 +9,7 @@ import androidx.paging.PagingState
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.jagoba.skinholder.core.BaseViewModel
+import dev.jagoba.skinholder.core.SessionExpiredException
 import dev.jagoba.skinholder.dataservice.repository.ItemPrecioRepository
 import dev.jagoba.skinholder.dataservice.repository.RegistroRepository
 import dev.jagoba.skinholder.models.registros.Registro
@@ -102,7 +103,7 @@ class RegistrosViewModel @Inject constructor(
 
     fun loadRegistros() {
         _uiState.value = RegistrosUiState.Loading
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             registroRepository.getRegistros().fold(
                 onSuccess = { registros ->
                     _allRegistros.value = registros
@@ -110,9 +111,11 @@ class RegistrosViewModel @Inject constructor(
                     else RegistrosUiState.Loaded
                 },
                 onFailure = { error ->
-                    _uiState.value = RegistrosUiState.Error(
-                        error.message ?: "Error inesperado"
-                    )
+                    if (error !is SessionExpiredException) {
+                        _uiState.value = RegistrosUiState.Error(
+                            error.message ?: "Error inesperado"
+                        )
+                    }
                 }
             )
         }
@@ -140,7 +143,7 @@ class RegistrosViewModel @Inject constructor(
     }
 
     fun deleteRegistro(registroId: Long) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             itemPrecioRepository.deleteItemPrecios(registroId).fold(
                 onSuccess = {
                     registroRepository.deleteRegistro(registroId).fold(
@@ -152,12 +155,16 @@ class RegistrosViewModel @Inject constructor(
                             _events.emit(RegistrosEvent.Deleted("Registro eliminado"))
                         },
                         onFailure = { e ->
-                            _events.emit(RegistrosEvent.DeleteError(e.message ?: "Error al eliminar"))
+                            if (e !is SessionExpiredException) {
+                                _events.emit(RegistrosEvent.DeleteError(e.message ?: "Error al eliminar"))
+                            }
                         }
                     )
                 },
                 onFailure = { e ->
-                    _events.emit(RegistrosEvent.DeleteError(e.message ?: "Error al eliminar"))
+                    if (e !is SessionExpiredException) {
+                        _events.emit(RegistrosEvent.DeleteError(e.message ?: "Error al eliminar"))
+                    }
                 }
             )
         }

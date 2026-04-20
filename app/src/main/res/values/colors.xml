@@ -4,7 +4,7 @@
     <color name="primary">#FFB8D600</color>
     <color name="primary_dark">#FF7A9000</color>
     <color name="primary_light">#FFCBD600</color>
-    <color name="on_primary">#FF000000</color>
+    <color name="on_primary">#FF1C1C1C</color>
     <color name="primary_container">#FF3A4400</color>
     <color name="on_primary_container">#FFCBD600</color>
 
@@ -14,15 +14,18 @@
     <color name="secondary_container">#FF444444</color>
     <color name="on_secondary_container">#FFE0E0E0</color>
 
-    <!-- Background & Surface -->
+    <!-- Background & Surface (neutral grays — no green tint from primary) -->
     <color name="background">#FF1C1C1C</color>
     <color name="on_background">#FFE0E0E0</color>
     <color name="surface">#FF252525</color>
     <color name="surface_variant">#FF2C2C2C</color>
     <color name="on_surface">#FFE0E0E0</color>
-    <color name="on_surface_variant">#FF888888</color>
-    <color name="surface_container">#FF383838</color>
-    <color name="surface_container_high">#FF444444</color>
+    <color name="on_surface_variant">#FFAAAAAA</color>
+    <color name="surface_container_lowest">#FF1E1E1E</color>
+    <color name="surface_container_low">#FF232323</color>
+    <color name="surface_container">#FF2C2C2C</color>
+    <color name="surface_container_high">#FF333333</color>
+    <color name="surface_container_highest">#FF3A3A3A</color>
     <color name="nav_bar">#FF2C2C2C</color>
 
     <!-- Error -->
@@ -32,7 +35,7 @@
     <color name="on_error_container">#FFFF6B6B</color>
 
     <!-- Outline & Divider -->
-    <color name="outline">#FF3A3A3A</color>
+    <color name="outline">#FF444444</color>
     <color name="outline_variant">#FF333333</color>
 
     <!-- Basic -->
@@ -43,10 +46,16 @@
     <color name="nav_active">#FFB8D600</color>
     <color name="nav_inactive">#FF888888</color>
 
-    <!-- Platform brand colors -->
-    <color name="color_steam">#FF1B2838</color>
+    <!-- Platform brand colors (lightened for dark backgrounds) -->
+    <color name="color_steam">#FF66C0F4</color>
     <color name="color_gamerpay">#FF019EFF</color>
-    <color name="color_csfloat">#FF4A4A4A</color>
+    <color name="color_csfloat">#FF9E9E9E</color>
+
+    <!-- Status colors (readable on dark surfaces) -->
+    <color name="status_error">#FFFF6B6B</color>
+    <color name="status_success">#FF81C784</color>
+    <color name="delete_red">#FFEF5350</color>
+    <color name="delete_red_dark">#FFD32F2F</color>
 
     <!-- Splash -->
     <color name="splash_background">#FF1C1C1C</color>

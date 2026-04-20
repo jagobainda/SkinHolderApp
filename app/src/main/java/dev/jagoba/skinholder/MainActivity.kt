@@ -17,6 +17,7 @@ import dev.jagoba.skinholder.core.AuthSessionManager
 import dev.jagoba.skinholder.core.GlobalEvent
 import dev.jagoba.skinholder.core.GlobalViewModel
 import dev.jagoba.skinholder.databinding.ActivityMainBinding
+import dev.jagoba.skinholder.dataservice.repository.AuthRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +28,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var authSessionManager: AuthSessionManager
+
+    @Inject
+    lateinit var authRepository: AuthRepository
 
     private val globalViewModel: GlobalViewModel by viewModels()
 
@@ -51,9 +55,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Redirect to login if not authenticated
-        if (!authSessionManager.isLoggedIn()) {
-            navController.navigate(R.id.navigation_login)
+        // Validate token and redirect to login if not authenticated
+        lifecycleScope.launch {
+            if (authSessionManager.isLoggedIn()) {
+                // Validate token before allowing access
+                authRepository.validateToken().fold(
+                    onSuccess = { isValid ->
+                        if (!isValid) {
+                            authSessionManager.clearSession()
+                            navController.navigate(R.id.navigation_login)
+                        }
+                    },
+                    onFailure = {
+                        // On network error, assume token might still be valid
+                        // but show warning if critical operations fail
+                    }
+                )
+            } else {
+                navController.navigate(R.id.navigation_login)
+            }
         }
 
         // Observe global events (errors, session expiry)
@@ -71,8 +91,10 @@ class MainActivity : AppCompatActivity() {
                                 getString(R.string.session_expired),
                                 Snackbar.LENGTH_LONG
                             ).show()
-                            navController.navigate(R.id.navigation_login) {
-                                popUpTo(R.id.navigation_home) { inclusive = true }
+                            if (navController.currentDestination?.id != R.id.navigation_login) {
+                                navController.navigate(R.id.navigation_login) {
+                                    popUpTo(navController.graph.id) { inclusive = true }
+                                }
                             }
                         }
                     }

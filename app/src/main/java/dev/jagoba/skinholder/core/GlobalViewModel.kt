@@ -3,6 +3,7 @@ package dev.jagoba.skinholder.core
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -23,6 +24,12 @@ class GlobalViewModel @Inject constructor(
     private val sessionExpiredNotifier: SessionExpiredNotifier
 ) : ViewModel() {
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        if (exception !is SessionExpiredException) {
+            exception.printStackTrace()
+        }
+    }
+
     private val _currentUsername = MutableStateFlow(authSessionManager.getUsername())
     val currentUsername: StateFlow<String?> = _currentUsername.asStateFlow()
 
@@ -36,7 +43,7 @@ class GlobalViewModel @Inject constructor(
     val globalEvents: SharedFlow<GlobalEvent> = _globalEvents.asSharedFlow()
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             sessionExpiredNotifier.sessionExpired.collect {
                 _isAuthenticated.value = false
                 _currentUsername.value = null

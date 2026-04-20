@@ -16,7 +16,7 @@ data class HomeUiState(
 class HomeViewModel @Inject constructor(private val userLogic: UserLogic) : BaseViewModel<HomeUiState>(HomeUiState()) {
 
     fun loadUser() {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             val user = userLogic.getCurrentUser()
             _uiState.value = _uiState.value.copy(user = user)
         }

@@ -46,7 +46,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
             android:contentDescription="Decrementar"
-            app:icon="@android:drawable/btn_minus"
+            app:icon="@drawable/ic_remove"
             app:layout_constraintBottom_toBottomOf="@id/text_cantidad"
             app:layout_constraintStart_toEndOf="@id/text_cantidad"
             app:layout_constraintTop_toTopOf="@id/text_cantidad" />
@@ -58,7 +58,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:contentDescription="Incrementar"
-            app:icon="@android:drawable/btn_plus"
+            app:icon="@drawable/ic_add"
             app:layout_constraintBottom_toBottomOf="@id/text_cantidad"
             app:layout_constraintStart_toEndOf="@id/btn_decrement"
             app:layout_constraintTop_toTopOf="@id/text_cantidad" />
@@ -70,7 +70,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="12dp"
             android:contentDescription="Guardar"
-            app:icon="@android:drawable/ic_menu_save"
+            app:icon="@drawable/ic_save"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_item_name" />
 

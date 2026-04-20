@@ -29,6 +29,8 @@ class AuthInterceptor @Inject constructor(
         ) {
             authSessionManager.clearSession()
             sessionExpiredNotifier.notifySessionExpired()
+            response.close()
+            throw SessionExpiredException()
         }
 
         return response

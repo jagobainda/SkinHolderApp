@@ -2,12 +2,13 @@ package dev.jagoba.skinholder.views.useritems
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import dev.jagoba.skinholder.R
 import dev.jagoba.skinholder.databinding.ItemUserItemBinding
 
 interface UserItemActions {
@@ -56,8 +57,8 @@ class UserItemAdapter(
 
             // Transient color flash on save result (matches Desktop NombreForeground behavior)
             when (model.saveResult) {
-                SaveResult.SUCCESS -> flashNameColor(Color.parseColor("#4CAF50"))
-                SaveResult.ERROR -> flashNameColor(Color.parseColor("#F44336"))
+                SaveResult.SUCCESS -> flashNameColor(ContextCompat.getColor(itemView.context, R.color.status_success))
+                SaveResult.ERROR -> flashNameColor(ContextCompat.getColor(itemView.context, R.color.status_error))
                 null -> {
                     // Reset to default text color
                     val defaultColor = binding.textItemName.textColors.defaultColor

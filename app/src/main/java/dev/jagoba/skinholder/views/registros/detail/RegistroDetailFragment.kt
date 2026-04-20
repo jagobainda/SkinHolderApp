@@ -65,10 +65,10 @@ class RegistroDetailFragment : Fragment() {
 
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
-            android.R.layout.simple_spinner_item,
+            R.layout.spinner_item,
             sortLabels
         ).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            setDropDownViewResource(R.layout.spinner_dropdown_item)
         }
         binding.spinnerDetailSort.adapter = spinnerAdapter
 

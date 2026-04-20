@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -154,8 +155,8 @@ class UserSettingsFragment : Fragment() {
         binding.textPasswordStatus.apply {
             text = message
             setTextColor(
-                if (isError) resources.getColor(android.R.color.holo_red_dark, null)
-                else resources.getColor(android.R.color.holo_green_dark, null)
+                if (isError) ContextCompat.getColor(requireContext(), R.color.status_error)
+                else ContextCompat.getColor(requireContext(), R.color.status_success)
             )
             isVisible = true
         }
@@ -165,8 +166,8 @@ class UserSettingsFragment : Fragment() {
         binding.textDeleteStatus.apply {
             text = message
             setTextColor(
-                if (isError) resources.getColor(android.R.color.holo_red_dark, null)
-                else resources.getColor(android.R.color.holo_green_dark, null)
+                if (isError) ContextCompat.getColor(requireContext(), R.color.status_error)
+                else ContextCompat.getColor(requireContext(), R.color.status_success)
             )
             isVisible = true
         }

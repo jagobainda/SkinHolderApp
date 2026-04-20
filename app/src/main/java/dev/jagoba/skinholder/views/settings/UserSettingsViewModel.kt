@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.jagoba.skinholder.core.AuthSessionManager
 import dev.jagoba.skinholder.core.BaseViewModel
+import dev.jagoba.skinholder.core.SessionExpiredException
 import dev.jagoba.skinholder.dataservice.repository.UserSettingsRepository
 import dev.jagoba.skinholder.logic.LoggerService
 import dev.jagoba.skinholder.models.enums.ELogType
@@ -51,7 +52,7 @@ class UserSettingsViewModel @Inject constructor(
     }
 
     fun loadUserInfo() {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             _uiState.value = UserSettingsUiState.Loading
             userSettingsRepository.getUserInfo().fold(
                 onSuccess = { info ->
@@ -79,7 +80,7 @@ class UserSettingsViewModel @Inject constructor(
     }
 
     fun changePassword(currentPassword: String, newPassword: String, confirmPassword: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             if (currentPassword.isBlank()) {
                 _events.emit(UserSettingsEvent.PasswordError("Introduce tu contraseña actual."))
                 return@launch
@@ -107,7 +108,9 @@ class UserSettingsViewModel @Inject constructor(
                     _events.emit(UserSettingsEvent.PasswordChanged(msg))
                 },
                 onFailure = { e ->
-                    _events.emit(UserSettingsEvent.PasswordError(e.message ?: "Error al cambiar la contraseña."))
+                    if (e !is SessionExpiredException) {
+                        _events.emit(UserSettingsEvent.PasswordError(e.message ?: "Error al cambiar la contraseña."))
+                    }
                 }
             )
             _isLoading.value = false
@@ -115,7 +118,7 @@ class UserSettingsViewModel @Inject constructor(
     }
 
     fun deleteAccount(password: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             if (password.isBlank()) {
                 _events.emit(UserSettingsEvent.DeleteError("Introduce tu contraseña para confirmar."))
                 return@launch
@@ -129,7 +132,9 @@ class UserSettingsViewModel @Inject constructor(
                     _events.emit(UserSettingsEvent.AccountDeleted)
                 },
                 onFailure = { e ->
-                    _events.emit(UserSettingsEvent.DeleteError(e.message ?: "Error al eliminar la cuenta."))
+                    if (e !is SessionExpiredException) {
+                        _events.emit(UserSettingsEvent.DeleteError(e.message ?: "Error al eliminar la cuenta."))
+                    }
                 }
             )
             _isLoading.value = false
@@ -137,7 +142,7 @@ class UserSettingsViewModel @Inject constructor(
     }
 
     fun logout() {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             authSessionManager.clearSession()
             _events.emit(UserSettingsEvent.LoggedOut)
         }

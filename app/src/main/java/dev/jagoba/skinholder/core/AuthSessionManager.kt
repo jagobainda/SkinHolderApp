@@ -37,6 +37,21 @@ class AuthSessionManager @Inject constructor(
             .apply()
     }
 
+    fun saveSessionWithPassword(token: String, username: String, userId: Int, password: String) {
+        prefs.edit()
+            .putString(KEY_TOKEN, token)
+            .putString(KEY_USERNAME, username)
+            .putInt(KEY_USER_ID, userId)
+            .putString(KEY_SAVED_PASSWORD, password)
+            .apply()
+    }
+
+    fun getSavedPassword(): String? = prefs.getString(KEY_SAVED_PASSWORD, null)
+
+    fun clearSavedPassword() {
+        prefs.edit().remove(KEY_SAVED_PASSWORD).apply()
+    }
+
     fun getToken(): String? = prefs.getString(KEY_TOKEN, null)
 
     fun getUsername(): String? = prefs.getString(KEY_USERNAME, null)
@@ -46,12 +61,13 @@ class AuthSessionManager @Inject constructor(
     fun isLoggedIn(): Boolean = !getToken().isNullOrBlank()
 
     fun clearSession() {
-        prefs.edit().clear().apply()
+        prefs.edit().remove(KEY_TOKEN).remove(KEY_USERNAME).remove(KEY_USER_ID).remove(KEY_SAVED_PASSWORD).apply()
     }
 
     companion object {
         private const val KEY_TOKEN = "auth_token"
         private const val KEY_USERNAME = "auth_username"
         private const val KEY_USER_ID = "auth_user_id"
+        private const val KEY_SAVED_PASSWORD = "auth_saved_password"
     }
 }

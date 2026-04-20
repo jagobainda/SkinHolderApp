@@ -3,6 +3,7 @@ package dev.jagoba.skinholder.views.useritems
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.jagoba.skinholder.core.BaseViewModel
+import dev.jagoba.skinholder.core.SessionExpiredException
 import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
 import dev.jagoba.skinholder.models.items.UserItem
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,7 +59,7 @@ class UserItemsViewModel @Inject constructor(
 
     fun loadItems() {
         _uiState.value = UserItemsUiState.Loading
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             val result = userItemRepository.getUserItems()
             result.fold(
                 onSuccess = { items ->
@@ -72,9 +73,11 @@ class UserItemsViewModel @Inject constructor(
                     }
                 },
                 onFailure = { error ->
-                    _uiState.value = UserItemsUiState.Error(
-                        error.message ?: "Error inesperado"
-                    )
+                    if (error !is SessionExpiredException) {
+                        _uiState.value = UserItemsUiState.Error(
+                            error.message ?: "Error inesperado"
+                        )
+                    }
                 }
             )
         }
@@ -117,7 +120,7 @@ class UserItemsViewModel @Inject constructor(
             }
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             val updatedUserItem = item.userItem.copy(cantidad = item.editedCantidad)
             val result = userItemRepository.updateUserItem(updatedUserItem)
 

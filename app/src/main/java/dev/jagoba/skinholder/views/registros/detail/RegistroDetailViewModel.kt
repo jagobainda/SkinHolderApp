@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.jagoba.skinholder.core.BaseViewModel
+import dev.jagoba.skinholder.core.SessionExpiredException
 import dev.jagoba.skinholder.dataservice.repository.ItemPrecioRepository
 import dev.jagoba.skinholder.dataservice.repository.RegistroRepository
 import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
@@ -71,8 +72,19 @@ class RegistroDetailViewModel @Inject constructor(
 
     private fun loadDetail() {
         _uiState.value = RegistroDetailUiState.Loading
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             val registrosResult = registroRepository.getRegistros()
+
+            if (registrosResult.isFailure) {
+                val error = registrosResult.exceptionOrNull()
+                if (error !is SessionExpiredException) {
+                    _uiState.value = RegistroDetailUiState.Error(
+                        error?.message ?: "Error al cargar registros"
+                    )
+                }
+                return@launch
+            }
+
             val registro = registrosResult.getOrNull()?.find { it.registroId == registroId }
 
             if (registro == null) {
@@ -84,9 +96,16 @@ class RegistroDetailViewModel @Inject constructor(
             val userItemsResult = userItemRepository.getUserItems()
 
             if (preciosResult.isFailure) {
-                _uiState.value = RegistroDetailUiState.Error(
-                    preciosResult.exceptionOrNull()?.message ?: "Error al cargar precios"
-                )
+                val error = preciosResult.exceptionOrNull()
+                if (error !is SessionExpiredException) {
+                    _uiState.value = RegistroDetailUiState.Error(
+                        error?.message ?: "Error al cargar precios"
+                    )
+                }
+                return@launch
+            }
+
+            if (userItemsResult.isFailure && userItemsResult.exceptionOrNull() is SessionExpiredException) {
                 return@launch
             }
 

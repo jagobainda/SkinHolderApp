@@ -111,10 +111,10 @@ class RegistrosFragment : Fragment(), RegistroActions {
 
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
-            android.R.layout.simple_spinner_item,
+            R.layout.spinner_item,
             sortLabels
         ).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            setDropDownViewResource(R.layout.spinner_dropdown_item)
         }
         binding.spinnerSort.adapter = spinnerAdapter
 
@@ -137,6 +137,8 @@ class RegistrosFragment : Fragment(), RegistroActions {
     }
 
     private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setColorSchemeResources(R.color.primary)
+        binding.swipeRefresh.setProgressBackgroundColorSchemeResource(R.color.surface_container)
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.refresh()
         }

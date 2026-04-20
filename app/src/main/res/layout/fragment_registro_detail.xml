@@ -165,7 +165,8 @@
             android:id="@+id/spinner_detail_sort"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:minWidth="100dp" />
+            android:minWidth="100dp"
+            android:popupBackground="@color/surface_container" />
 
     </LinearLayout>
 
@@ -208,7 +209,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/registro_detail_empty"
-            android:textAppearance="?attr/textAppearanceBody1" />
+            android:textAppearance="?attr/textAppearanceBodyLarge" />
 
     </LinearLayout>
 
