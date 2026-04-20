@@ -1,7 +1,6 @@
-package com.example.skinholderapp
+package dev.jagoba.skinholder
 
 import org.junit.Test
-
 import org.junit.Assert.*
 
 /**

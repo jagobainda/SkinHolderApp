@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.jagoba.skinholder.dataservice.api.SteamPriceApi
 import dev.jagoba.skinholder.dataservice.repository.UserRepository
 import dev.jagoba.skinholder.dataservice.repository.UserRepositoryImpl
 import javax.inject.Singleton
@@ -15,4 +16,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUserRepository(): UserRepository = UserRepositoryImpl()
+
+    @Provides
+    @Singleton
+    fun provideSteamPriceApi(): SteamPriceApi = SteamPriceApi()
 }

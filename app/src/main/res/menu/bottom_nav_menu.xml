@@ -9,19 +9,11 @@
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_dashboard_black_24dp"
-<<<<<<< HEAD
-        android:title="@string/title_items" />
-=======
         android:title="@string/title_dashboard" />
->>>>>>> b70b825a8c72a68be7180cb96879a7473c3462d0
 
     <item
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_notifications_black_24dp"
-<<<<<<< HEAD
-        android:title="@string/title_registros" />
-=======
         android:title="@string/title_notifications" />
->>>>>>> b70b825a8c72a68be7180cb96879a7473c3462d0
 
 </menu>
