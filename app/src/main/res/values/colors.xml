@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="color_steam">#FF1B2838</color>
+    <color name="color_gamerpay">#FF4CAF50</color>
+    <color name="color_csfloat">#FFFF9800</color>
 </resources>

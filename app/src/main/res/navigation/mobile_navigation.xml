@@ -25,10 +25,26 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="dev.jagoba.skinholder.views.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_registros"
+        android:name="dev.jagoba.skinholder.views.registros.RegistrosFragment"
+        android:label="@string/title_registros"
+        tools:layout="@layout/fragment_registros">
+
+        <action
+            android:id="@+id/action_registros_to_detail"
+            app:destination="@id/navigation_registro_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_registro_detail"
+        android:name="dev.jagoba.skinholder.views.registros.detail.RegistroDetailFragment"
+        android:label="@string/registro_detail_title"
+        tools:layout="@layout/fragment_registro_detail">
+
+        <argument
+            android:name="registroId"
+            app:argType="long" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_notifications"

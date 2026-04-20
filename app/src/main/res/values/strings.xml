@@ -19,4 +19,33 @@
     <string name="user_items_search_hint">Buscar items…</string>
     <string name="user_items_save_success">Item actualizado correctamente</string>
     <string name="user_items_save_error">Error al actualizar el item</string>
+
+    <!-- Registros -->
+    <string name="title_registros">Registros</string>
+    <string name="registros_empty">No hay registros disponibles</string>
+    <string name="registros_error">Error al cargar los registros</string>
+    <string name="registros_delete_confirm_title">Eliminar registro</string>
+    <string name="registros_delete_confirm_message">¿Estás seguro de que quieres eliminar este registro?</string>
+    <string name="registros_deleted">Registro eliminado</string>
+    <string name="registros_delete_error">Error al eliminar el registro</string>
+    <string name="registros_filter_date">Filtrar por fecha</string>
+    <string name="registros_filter_clear">Limpiar filtro</string>
+    <string name="registros_sort_fecha">Fecha</string>
+    <string name="registros_sort_steam">Steam</string>
+    <string name="registros_sort_gamerpay">GamerPay</string>
+    <string name="registros_sort_csfloat">CSFloat</string>
+    <string name="registros_price_format">%.2f €</string>
+    <string name="registros_date_range_format">%s — %s</string>
+
+    <!-- Registro Detail -->
+    <string name="registro_detail_title">Detalle del registro</string>
+    <string name="registro_detail_empty">No hay detalles para este registro</string>
+    <string name="registro_detail_fecha">Fecha de consulta</string>
+    <string name="registro_detail_sort_name">Artículo</string>
+    <string name="registro_detail_sort_cantidad">Cantidad</string>
+    <string name="registro_detail_sort_steam">Steam</string>
+    <string name="registro_detail_sort_gamerpay">GamerPay</string>
+    <string name="registro_detail_sort_csfloat">CSFloat</string>
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_delete">Eliminar</string>
 </resources>
