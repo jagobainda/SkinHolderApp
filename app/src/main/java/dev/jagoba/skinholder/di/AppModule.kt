@@ -10,6 +10,7 @@ import dev.jagoba.skinholder.dataservice.api.ItemPrecioApiService
 import dev.jagoba.skinholder.dataservice.api.ItemsApiService
 import dev.jagoba.skinholder.dataservice.api.LogApiService
 import dev.jagoba.skinholder.dataservice.api.RegistroApiService
+import dev.jagoba.skinholder.dataservice.api.UserSettingsApiService
 import dev.jagoba.skinholder.dataservice.api.SteamPriceApi
 import dev.jagoba.skinholder.dataservice.api.UserItemApiService
 import dev.jagoba.skinholder.dataservice.repository.ExternalRepository
@@ -19,6 +20,7 @@ import dev.jagoba.skinholder.dataservice.repository.LogRepository
 import dev.jagoba.skinholder.dataservice.repository.RegistroRepository
 import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
 import dev.jagoba.skinholder.dataservice.repository.UserRepository
+import dev.jagoba.skinholder.dataservice.repository.UserSettingsRepository
 import dev.jagoba.skinholder.dataservice.repository.UserRepositoryImpl
 import dev.jagoba.skinholder.logic.LoggerService
 import javax.inject.Singleton
@@ -65,4 +67,9 @@ object AppModule {
         logRepository: LogRepository,
         authSessionManager: AuthSessionManager
     ): LoggerService = LoggerService(logRepository, authSessionManager)
+
+    @Provides
+    @Singleton
+    fun provideUserSettingsRepository(api: UserSettingsApiService): UserSettingsRepository =
+        UserSettingsRepository(api)
 }

@@ -12,6 +12,7 @@ import dev.jagoba.skinholder.dataservice.api.ItemsApiService
 import dev.jagoba.skinholder.dataservice.api.LogApiService
 import dev.jagoba.skinholder.dataservice.api.RegistroApiService
 import dev.jagoba.skinholder.dataservice.api.UserItemApiService
+import dev.jagoba.skinholder.dataservice.api.UserSettingsApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -86,5 +87,11 @@ object NetworkModule {
     @Singleton
     fun provideExternalApiService(retrofit: Retrofit): ExternalApiService {
         return retrofit.create(ExternalApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserSettingsApiService(retrofit: Retrofit): UserSettingsApiService {
+        return retrofit.create(UserSettingsApiService::class.java)
     }
 }

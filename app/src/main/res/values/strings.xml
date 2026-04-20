@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">SkinHolder</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="app_name_upper">SKINHOLDER</string>
+    <string name="title_home">Inicio</string>
     <string name="title_items">Items</string>
+    <string name="welcome_title">BIENVENIDO A</string>
+    <string name="welcome_greeting">Hola, %1$s</string>
+    <string name="session_expired">Sesión expirada. Inicia sesión de nuevo.</string>
 
     <!-- Login -->
     <string name="login_username_label">Usuario</string>
@@ -35,7 +37,7 @@
     <string name="registros_sort_gamerpay">GamerPay</string>
     <string name="registros_sort_csfloat">CSFloat</string>
     <string name="registros_price_format">%.2f €</string>
-    <string name="registros_date_range_format">%s — %s</string>
+    <string name="registros_date_range_format" formatted="false">%s — %s</string>
 
     <!-- Registro Detail -->
     <string name="registro_detail_title">Detalle del registro</string>
@@ -48,4 +50,25 @@
     <string name="registro_detail_sort_csfloat">CSFloat</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_delete">Eliminar</string>
+
+    <!-- Settings -->
+    <string name="title_settings">Ajustes</string>
+    <string name="settings_account_info">Información de cuenta</string>
+    <string name="settings_username">Nombre de usuario</string>
+    <string name="settings_created_at">Fecha de registro</string>
+    <string name="settings_change_password">Cambiar contraseña</string>
+    <string name="settings_current_password">Contraseña actual</string>
+    <string name="settings_new_password">Nueva contraseña</string>
+    <string name="settings_confirm_password">Confirmar nueva contraseña</string>
+    <string name="settings_change_password_btn">Cambiar contraseña</string>
+    <string name="settings_delete_account">Eliminar cuenta</string>
+    <string name="settings_delete_warning">Esta acción es irreversible. Se eliminarán todos tus datos, registros e items asociados a tu cuenta.</string>
+    <string name="settings_delete_password">Contraseña para confirmar</string>
+    <string name="settings_delete_btn">Eliminar cuenta</string>
+    <string name="settings_logout">Cerrar sesión</string>
+    <string name="settings_logout_confirm_title">Cerrar sesión</string>
+    <string name="settings_logout_confirm_message">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="settings_delete_confirm_title">Eliminar cuenta</string>
+    <string name="settings_delete_confirm_message">¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.</string>
+    <string name="settings_password_empty">Introduce tu contraseña para confirmar.</string>
 </resources>

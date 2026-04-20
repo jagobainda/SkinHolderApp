@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.splashscreen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

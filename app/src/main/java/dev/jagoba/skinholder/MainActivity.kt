@@ -2,15 +2,22 @@ package dev.jagoba.skinholder
 
 import android.os.Bundle
 import android.view.View
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.jagoba.skinholder.core.AuthSessionManager
+import dev.jagoba.skinholder.core.GlobalEvent
+import dev.jagoba.skinholder.core.GlobalViewModel
 import dev.jagoba.skinholder.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -21,7 +28,10 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var authSessionManager: AuthSessionManager
 
+    private val globalViewModel: GlobalViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -30,29 +40,44 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_registros, R.id.navigation_user_items, R.id.navigation_notifications
-            )
-        )
-
-        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // Hide bottom nav and action bar on login screen
+        // Hide bottom nav on login screen
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_login) {
                 navView.visibility = View.GONE
-                supportActionBar?.hide()
             } else {
                 navView.visibility = View.VISIBLE
-                supportActionBar?.show()
             }
         }
 
         // Redirect to login if not authenticated
         if (!authSessionManager.isLoggedIn()) {
             navController.navigate(R.id.navigation_login)
+        }
+
+        // Observe global events (errors, session expiry)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                globalViewModel.globalEvents.collect { event ->
+                    when (event) {
+                        is GlobalEvent.ShowError -> {
+                            Snackbar.make(binding.container, event.message, Snackbar.LENGTH_LONG).show()
+                        }
+                        is GlobalEvent.SessionExpired -> {
+                            authSessionManager.clearSession()
+                            Snackbar.make(
+                                binding.container,
+                                getString(R.string.session_expired),
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            navController.navigate(R.id.navigation_login) {
+                                popUpTo(R.id.navigation_home) { inclusive = true }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
