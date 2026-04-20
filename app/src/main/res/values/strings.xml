@@ -3,6 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_items">Items</string>
 
     <!-- Login -->
     <string name="login_username_label">Usuario</string>
@@ -11,4 +12,11 @@
     <string name="register_private_title">Registro privado</string>
     <string name="register_private_message">De momento el registro de nuevos usuarios es privado. El correo para solicitar un usuario es skinholder@jagoba.dev</string>
     <string name="register_email_copied">Email copiado al portapapeles</string>
+
+    <!-- UserItems -->
+    <string name="user_items_empty">No tienes items en tu inventario</string>
+    <string name="user_items_error">Error al cargar los items</string>
+    <string name="user_items_search_hint">Buscar items…</string>
+    <string name="user_items_save_success">Item actualizado correctamente</string>
+    <string name="user_items_save_error">Error al actualizar el item</string>
 </resources>

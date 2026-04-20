@@ -35,4 +35,10 @@
         android:name="dev.jagoba.skinholder.views.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_user_items"
+        android:name="dev.jagoba.skinholder.views.useritems.UserItemsFragment"
+        android:label="@string/title_items"
+        tools:layout="@layout/fragment_user_items" />
 </navigation>
