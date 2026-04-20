@@ -38,6 +38,11 @@
     <string name="registros_sort_csfloat">CSFloat</string>
     <string name="registros_price_format">%.2f €</string>
     <string name="registros_date_range_format" formatted="false">%s — %s</string>
+    <string name="registros_consultar">Consultar</string>
+    <string name="registros_consultando_progreso">Consultando %1$d/%2$d ítems…</string>
+    <string name="registros_consultando_inicio">Iniciando consulta…</string>
+    <string name="registros_consulta_success">Registro creado correctamente</string>
+    <string name="registros_empty_action">Pulsa "Consultar" para crear tu primer registro</string>
 
     <!-- Registro Detail -->
     <string name="registro_detail_title">Detalle del registro</string>
@@ -71,4 +76,40 @@
     <string name="settings_delete_confirm_title">Eliminar cuenta</string>
     <string name="settings_delete_confirm_message">¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.</string>
     <string name="settings_password_empty">Introduce tu contraseña para confirmar.</string>
+
+    <!-- Dashboard / Home -->
+    <string name="dashboard_error_title">No se pudo cargar el dashboard</string>
+    <string name="dashboard_retry">Reintentar</string>
+    <string name="dashboard_na">N/A</string>
+    <string name="dashboard_value_ms">%1$dms</string>
+    <string name="dashboard_value_hours">%1$dh</string>
+    <string name="dashboard_value_eur">%.2f €</string>
+
+    <!-- Connection card -->
+    <string name="dashboard_connection_title">Conexión</string>
+    <string name="dashboard_connection_status">Estado</string>
+    <string name="dashboard_connection_active">Activo</string>
+    <string name="dashboard_connection_inactive">Inactivo</string>
+    <string name="dashboard_connection_ping">Ping</string>
+    <string name="dashboard_connection_uptime">Uptime</string>
+
+    <!-- Last registry card -->
+    <string name="dashboard_last_registry_title">Último Registro</string>
+    <string name="dashboard_last_registry_empty">Sin registros</string>
+
+    <!-- Latency card -->
+    <string name="dashboard_latency_title">Latencia</string>
+
+    <!-- Variance card -->
+    <string name="dashboard_variance_title">Varianza</string>
+    <string name="dashboard_variance_last_week">Última semana</string>
+    <string name="dashboard_variance_last_month">Último mes</string>
+    <string name="dashboard_variance_last_year">Último año</string>
+    <string name="dashboard_variance_format_positive">+%.2f%%</string>
+    <string name="dashboard_variance_format_negative">%.2f%%</string>
+
+    <!-- Platform labels -->
+    <string name="platform_steam">Steam</string>
+    <string name="platform_gamerpay">GamerPay</string>
+    <string name="platform_csfloat">CSFloat</string>
 </resources>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -51,7 +52,9 @@ class RegistrosFragment : Fragment(), RegistroActions {
         setupDateFilter()
         setupSortControls()
         setupSwipeRefresh()
+        setupConsultar()
         observeState()
+        observeConsultaState()
         observeEvents()
     }
 
@@ -144,6 +147,12 @@ class RegistrosFragment : Fragment(), RegistroActions {
         }
     }
 
+    private fun setupConsultar() {
+        binding.fabConsultar.setOnClickListener {
+            viewModel.consultarPrecios()
+        }
+    }
+
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -183,6 +192,41 @@ class RegistrosFragment : Fragment(), RegistroActions {
         }
     }
 
+    private fun observeConsultaState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.consultaState.collect { state ->
+                    when (state) {
+                        is ConsultaState.Loading -> {
+                            binding.fabConsultar.isEnabled = false
+                            binding.layoutConsultaProgress.isVisible = true
+                            if (state.total > 0) {
+                                binding.progressConsulta.isIndeterminate = false
+                                binding.progressConsulta.max = state.total
+                                binding.progressConsulta.setProgressCompat(state.progreso, true)
+                                binding.textConsultaProgress.text = getString(
+                                    R.string.registros_consultando_progreso,
+                                    state.progreso,
+                                    state.total
+                                )
+                            } else {
+                                binding.progressConsulta.isIndeterminate = true
+                                binding.textConsultaProgress.text =
+                                    getString(R.string.registros_consultando_inicio)
+                            }
+                        }
+                        is ConsultaState.Idle,
+                        is ConsultaState.Success,
+                        is ConsultaState.Error -> {
+                            binding.fabConsultar.isEnabled = true
+                            binding.layoutConsultaProgress.isVisible = false
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun observeEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -192,10 +236,25 @@ class RegistrosFragment : Fragment(), RegistroActions {
                             Snackbar.make(binding.root, event.message, Snackbar.LENGTH_SHORT).show()
                         is RegistrosEvent.DeleteError ->
                             Snackbar.make(binding.root, event.message, Snackbar.LENGTH_LONG).show()
+                        is RegistrosEvent.ConsultaSuccess ->
+                            showColoredSnackbar(
+                                getString(R.string.registros_consulta_success),
+                                R.color.status_success
+                            )
+                        is RegistrosEvent.ConsultaError ->
+                            showColoredSnackbar(event.message, R.color.status_error)
                     }
                 }
             }
         }
+    }
+
+    private fun showColoredSnackbar(message: String, backgroundColorRes: Int) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .setAnchorView(binding.fabConsultar)
+            .setBackgroundTint(ContextCompat.getColor(requireContext(), backgroundColorRes))
+            .setTextColor(ContextCompat.getColor(requireContext(), R.color.on_error))
+            .show()
     }
 
     // RegistroActions

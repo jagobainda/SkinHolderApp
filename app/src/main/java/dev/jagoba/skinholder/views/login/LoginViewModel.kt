@@ -76,6 +76,7 @@ class LoginViewModel @Inject constructor(
                         authSessionManager.clearSavedPassword()
                     }
                     sessionExpiredNotifier.reset()
+                    authSessionManager.getOrInitAppStartTime()
                     _uiState.value = LoginUiState.Success(response.userName)
                 },
                 onFailure = { error ->

@@ -8,10 +8,14 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.jagoba.skinholder.core.AuthSessionManager
 import dev.jagoba.skinholder.core.BaseViewModel
 import dev.jagoba.skinholder.core.SessionExpiredException
+import dev.jagoba.skinholder.dataservice.repository.ExternalRepository
 import dev.jagoba.skinholder.dataservice.repository.ItemPrecioRepository
 import dev.jagoba.skinholder.dataservice.repository.RegistroRepository
+import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
+import dev.jagoba.skinholder.models.items.ItemPrecio
 import dev.jagoba.skinholder.models.registros.Registro
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -19,10 +23,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -37,16 +44,41 @@ sealed class RegistrosUiState {
     data object Empty : RegistrosUiState()
 }
 
+sealed class ConsultaState {
+    data object Idle : ConsultaState()
+    data class Loading(val progreso: Int, val total: Int) : ConsultaState()
+    data object Success : ConsultaState()
+    data class Error(val message: String) : ConsultaState()
+}
+
+data class ConsultaProgreso(
+    val totalItems: Int = 0,
+    val progresoSteam: Int = 0,
+    val progresoGamerPay: Int = 0,
+    val progresoCSFloat: Int = 0,
+    val totalSteam: Double = 0.0,
+    val totalGamerPay: Double = 0.0,
+    val totalCSFloat: Double = 0.0,
+    val itemsNoListadosGamerPay: Int = 0,
+    val itemsWarningSteam: Int = 0,
+    val itemsErrorSteam: Int = 0
+)
+
 sealed class RegistrosEvent {
     data class Deleted(val message: String) : RegistrosEvent()
     data class DeleteError(val message: String) : RegistrosEvent()
+    data class ConsultaSuccess(val registroId: Long) : RegistrosEvent()
+    data class ConsultaError(val message: String) : RegistrosEvent()
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class RegistrosViewModel @Inject constructor(
     private val registroRepository: RegistroRepository,
-    private val itemPrecioRepository: ItemPrecioRepository
+    private val itemPrecioRepository: ItemPrecioRepository,
+    private val userItemRepository: UserItemRepository,
+    private val externalRepository: ExternalRepository,
+    private val authSessionManager: AuthSessionManager
 ) : BaseViewModel<RegistrosUiState>(RegistrosUiState.Loading) {
 
     private val _allRegistros = MutableStateFlow<List<Registro>>(emptyList())
@@ -59,6 +91,12 @@ class RegistrosViewModel @Inject constructor(
 
     private val _events = MutableSharedFlow<RegistrosEvent>()
     val events = _events.asSharedFlow()
+
+    private val _consultaState = MutableStateFlow<ConsultaState>(ConsultaState.Idle)
+    val consultaState: StateFlow<ConsultaState> = _consultaState.asStateFlow()
+
+    private val _consultaProgreso = MutableStateFlow(ConsultaProgreso())
+    val consultaProgreso: StateFlow<ConsultaProgreso> = _consultaProgreso.asStateFlow()
 
     private val dateParser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
 
@@ -168,6 +206,148 @@ class RegistrosViewModel @Inject constructor(
                 }
             )
         }
+    }
+
+    fun consultarPrecios() {
+        if (_consultaState.value is ConsultaState.Loading) return
+
+        _consultaProgreso.value = ConsultaProgreso()
+        _consultaState.value = ConsultaState.Loading(progreso = 0, total = 0)
+
+        viewModelScope.launch(exceptionHandler) {
+            try {
+                val userItems = userItemRepository.getUserItems().getOrElse { error ->
+                    if (error is SessionExpiredException) return@launch
+                    finishConsultaWithError(error.message ?: "Error obteniendo los items del usuario")
+                    return@launch
+                }
+
+                val total = userItems.size
+                _consultaProgreso.update { it.copy(totalItems = total) }
+                _consultaState.value = ConsultaState.Loading(progreso = 0, total = total)
+
+                if (userItems.isEmpty()) {
+                    finishConsultaWithError("No tienes items para consultar")
+                    return@launch
+                }
+
+                val gamerPayPrices = externalRepository.getGamerPayPrices().getOrElse { error ->
+                    if (error is SessionExpiredException) return@launch
+                    emptyList()
+                }
+
+                val csFloatNames = userItems
+                    .map { it.csFloatMarketHashName.ifBlank { it.itemName } }
+                    .filter { it.isNotBlank() }
+                    .distinct()
+                val csFloatPrices = if (csFloatNames.isNotEmpty()) {
+                    externalRepository.getCSFloatPrices(csFloatNames).getOrElse { error ->
+                        if (error is SessionExpiredException) return@launch
+                        emptyMap()
+                    }
+                } else {
+                    emptyMap()
+                }
+
+                val itemPrecios = mutableListOf<ItemPrecio>()
+                var totalSteam = 0.0
+                var totalGamerPay = 0.0
+                var totalCSFloat = 0.0
+                var warningSteam = 0
+                var errorSteam = 0
+                var noListadosGamerPay = 0
+
+                userItems.forEachIndexed { index, userItem ->
+                    val steamHashName = userItem.steamHashName.ifBlank { userItem.itemName }
+                    val gamerPayLookup = userItem.gamerPayName.ifBlank { userItem.itemName }
+                    val csFloatLookup = userItem.csFloatMarketHashName.ifBlank { userItem.itemName }
+
+                    val steamInfo = externalRepository.getSteamPriceWithPolling(steamHashName)
+                    val gamerPayItem = gamerPayPrices.firstOrNull {
+                        it.name.trim().equals(gamerPayLookup.trim(), ignoreCase = true)
+                    }
+                    val csFloatPrice = csFloatPrices[csFloatLookup] ?: 0.0
+
+                    if (steamInfo.isWarning) warningSteam++
+                    if (steamInfo.isError) errorSteam++
+                    if (gamerPayItem == null) noListadosGamerPay++
+
+                    if (steamInfo.price > 0) totalSteam += steamInfo.price * userItem.cantidad
+                    if (gamerPayItem != null) totalGamerPay += gamerPayItem.price * userItem.cantidad
+                    if (csFloatPrice > 0) totalCSFloat += csFloatPrice * userItem.cantidad
+
+                    itemPrecios.add(
+                        ItemPrecio(
+                            precioSteam = maxOf(steamInfo.price, 0.0),
+                            precioGamerPay = gamerPayItem?.price ?: 0.0,
+                            precioCsFloat = maxOf(csFloatPrice, 0.0),
+                            userItemId = userItem.userItemId
+                        )
+                    )
+
+                    val progreso = index + 1
+                    _consultaProgreso.update {
+                        it.copy(
+                            progresoSteam = progreso,
+                            progresoGamerPay = progreso,
+                            progresoCSFloat = progreso,
+                            totalSteam = totalSteam,
+                            totalGamerPay = totalGamerPay,
+                            totalCSFloat = totalCSFloat,
+                            itemsWarningSteam = warningSteam,
+                            itemsErrorSteam = errorSteam,
+                            itemsNoListadosGamerPay = noListadosGamerPay
+                        )
+                    }
+                    _consultaState.value = ConsultaState.Loading(progreso = progreso, total = total)
+                }
+
+                val registro = Registro(
+                    fechaHora = dateParser.format(Date()),
+                    totalSteam = totalSteam,
+                    totalGamerPay = totalGamerPay,
+                    totalCsFloat = totalCSFloat,
+                    userId = authSessionManager.getUserId()
+                )
+
+                val registroId = registroRepository.createRegistro(registro).getOrElse { error ->
+                    if (error is SessionExpiredException) return@launch
+                    finishConsultaWithError(error.message ?: "Error creando el registro")
+                    return@launch
+                }
+
+                if (registroId < 1) {
+                    finishConsultaWithError("Error creando el registro")
+                    return@launch
+                }
+
+                val preciosConRegistro = itemPrecios.map { it.copy(registroId = registroId) }
+
+                itemPrecioRepository.createItemPrecios(preciosConRegistro).getOrElse { error ->
+                    if (error is SessionExpiredException) return@launch
+                    finishConsultaWithError(error.message ?: "Error guardando los precios de los items")
+                    return@launch
+                }
+
+                _consultaState.value = ConsultaState.Success
+                _events.emit(RegistrosEvent.ConsultaSuccess(registroId))
+                loadRegistros()
+            } catch (e: Exception) {
+                if (e !is SessionExpiredException) {
+                    finishConsultaWithError(e.message ?: "Error inesperado al consultar precios")
+                }
+            }
+        }
+    }
+
+    private suspend fun finishConsultaWithError(message: String) {
+        _consultaState.value = ConsultaState.Error(message)
+        _events.emit(RegistrosEvent.ConsultaError(message))
+    }
+
+    fun resetConsultaState() {
+        _consultaState.value = ConsultaState.Idle
+        _consultaProgreso.value = ConsultaProgreso()
     }
 
     private fun parseDate(dateStr: String): Long? {

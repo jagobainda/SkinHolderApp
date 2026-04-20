@@ -22,6 +22,7 @@ import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
 import dev.jagoba.skinholder.dataservice.repository.UserRepository
 import dev.jagoba.skinholder.dataservice.repository.UserSettingsRepository
 import dev.jagoba.skinholder.dataservice.repository.UserRepositoryImpl
+import dev.jagoba.skinholder.dataservice.repository.DashboardRepository
 import dev.jagoba.skinholder.logic.LoggerService
 import javax.inject.Singleton
 
@@ -72,4 +73,11 @@ object AppModule {
     @Singleton
     fun provideUserSettingsRepository(api: UserSettingsApiService): UserSettingsRepository =
         UserSettingsRepository(api)
+
+    @Provides
+    @Singleton
+    fun provideDashboardRepository(
+        registroRepository: RegistroRepository,
+        authSessionManager: AuthSessionManager
+    ): DashboardRepository = DashboardRepository(registroRepository, authSessionManager)
 }

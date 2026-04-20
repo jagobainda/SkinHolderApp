@@ -60,8 +60,26 @@ class AuthSessionManager @Inject constructor(
 
     fun isLoggedIn(): Boolean = !getToken().isNullOrBlank()
 
+    /**
+     * Returns the timestamp (epoch millis) at which the current app session was first started.
+     * If not yet recorded, it is initialized to the current time and persisted.
+     */
+    fun getOrInitAppStartTime(): Long {
+        val saved = prefs.getLong(KEY_APP_START_TIME, 0L)
+        if (saved > 0L) return saved
+        val now = System.currentTimeMillis()
+        prefs.edit().putLong(KEY_APP_START_TIME, now).apply()
+        return now
+    }
+
     fun clearSession() {
-        prefs.edit().remove(KEY_TOKEN).remove(KEY_USERNAME).remove(KEY_USER_ID).remove(KEY_SAVED_PASSWORD).apply()
+        prefs.edit()
+            .remove(KEY_TOKEN)
+            .remove(KEY_USERNAME)
+            .remove(KEY_USER_ID)
+            .remove(KEY_SAVED_PASSWORD)
+            .remove(KEY_APP_START_TIME)
+            .apply()
     }
 
     companion object {
@@ -69,5 +87,6 @@ class AuthSessionManager @Inject constructor(
         private const val KEY_USERNAME = "auth_username"
         private const val KEY_USER_ID = "auth_user_id"
         private const val KEY_SAVED_PASSWORD = "auth_saved_password"
+        private const val KEY_APP_START_TIME = "app_start_time"
     }
 }

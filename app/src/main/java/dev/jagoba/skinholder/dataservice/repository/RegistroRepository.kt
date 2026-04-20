@@ -1,6 +1,7 @@
 package dev.jagoba.skinholder.dataservice.repository
 
 import dev.jagoba.skinholder.dataservice.api.RegistroApiService
+import dev.jagoba.skinholder.models.dashboard.VarianceStats
 import dev.jagoba.skinholder.models.registros.Registro
 import javax.inject.Inject
 
@@ -26,6 +27,19 @@ class RegistroRepository @Inject constructor(
             val response = api.getRegistros()
             if (response.isSuccessful) {
                 Result.success(response.body() ?: emptyList())
+            } else {
+                Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getVarianceStats(): Result<VarianceStats> {
+        return try {
+            val response = api.getVarianceStats()
+            if (response.isSuccessful) {
+                Result.success(response.body() ?: VarianceStats())
             } else {
                 Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
             }

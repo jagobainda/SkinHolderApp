@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_variance"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/outline_variant"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header with title + platform toggle -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_trending_up"
+                app:tint="@color/accent_purple" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="@string/dashboard_variance_title"
+                android:textColor="@color/on_surface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btn_platform_steam"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_platform_toggle"
+                android:contentDescription="@string/platform_steam"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_logo_steam"
+                app:tint="@color/platform_toggle_icon_tint" />
+
+            <ImageButton
+                android:id="@+id/btn_platform_gamerpay"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_platform_toggle"
+                android:contentDescription="@string/platform_gamerpay"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_logo_gamerpay"
+                app:tint="@color/platform_toggle_icon_tint" />
+
+            <ImageButton
+                android:id="@+id/btn_platform_csfloat"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_platform_toggle"
+                android:contentDescription="@string/platform_csfloat"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_logo_csfloat"
+                app:tint="@color/platform_toggle_icon_tint" />
+        </LinearLayout>
+
+        <!-- Last week row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dashboard_variance_last_week"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/icon_variance_week"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_trending_up"
+                tools:tint="@color/status_success" />
+
+            <TextView
+                android:id="@+id/text_variance_week"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="+2.34%"
+                tools:textColor="@color/status_success" />
+        </LinearLayout>
+
+        <!-- Last month row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dashboard_variance_last_month"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/icon_variance_month"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_trending_down"
+                tools:tint="@color/status_error" />
+
+            <TextView
+                android:id="@+id/text_variance_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="-1.10%"
+                tools:textColor="@color/status_error" />
+        </LinearLayout>
+
+        <!-- Last year row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dashboard_variance_last_year"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/icon_variance_year"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_trending_up"
+                tools:tint="@color/status_neutral" />
+
+            <TextView
+                android:id="@+id/text_variance_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="N/A"
+                tools:textColor="@color/status_neutral" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
