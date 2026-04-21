@@ -11,6 +11,7 @@
     <string name="login_username_label">Usuario</string>
     <string name="login_password_label">Contraseña</string>
     <string name="login_button">INICIAR SESIÓN</string>
+    <string name="login_remember_me">Recordarme</string>
     <string name="register_private_title">Registro privado</string>
     <string name="register_private_message">De momento el registro de nuevos usuarios es privado. El correo para solicitar un usuario es skinholder@jagoba.dev</string>
     <string name="register_email_copied">Email copiado al portapapeles</string>

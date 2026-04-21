@@ -38,8 +38,22 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        prefillSavedCredentials()
         setupListeners()
         observeState()
+    }
+
+    private fun prefillSavedCredentials() {
+        // Only pre-fill when the fields are empty so we don't clobber text the
+        // user may have typed before a configuration change.
+        val saved = viewModel.getSavedCredentials() ?: return
+        if (binding.editUsername.text.isNullOrEmpty()) {
+            binding.editUsername.setText(saved.username)
+        }
+        if (binding.editPassword.text.isNullOrEmpty() && saved.password.isNotEmpty()) {
+            binding.editPassword.setText(saved.password)
+        }
+        binding.checkRememberMe.isChecked = saved.rememberMe
     }
 
     private fun setupListeners() {
@@ -52,6 +66,10 @@ class LoginFragment : Fragment() {
                 performLogin()
                 true
             } else false
+        }
+
+        binding.checkRememberMe.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setSavePassword(isChecked)
         }
 
         binding.btnRegister.setOnClickListener {
@@ -68,30 +86,39 @@ class LoginFragment : Fragment() {
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    when (state) {
-                        is LoginUiState.Idle -> {
-                            binding.progressLoading.isVisible = false
-                            binding.btnLogin.isEnabled = true
-                            binding.textError.isVisible = false
-                        }
+                launch {
+                    viewModel.uiState.collect { state ->
+                        when (state) {
+                            is LoginUiState.Idle -> {
+                                binding.progressLoading.isVisible = false
+                                binding.btnLogin.isEnabled = true
+                                binding.textError.isVisible = false
+                            }
 
-                        is LoginUiState.Loading -> {
-                            binding.progressLoading.isVisible = true
-                            binding.btnLogin.isEnabled = false
-                            binding.textError.isVisible = false
-                        }
+                            is LoginUiState.Loading -> {
+                                binding.progressLoading.isVisible = true
+                                binding.btnLogin.isEnabled = false
+                                binding.textError.isVisible = false
+                            }
 
-                        is LoginUiState.Success -> {
-                            binding.progressLoading.isVisible = false
-                            findNavController().navigate(R.id.action_login_to_home)
-                        }
+                            is LoginUiState.Success -> {
+                                binding.progressLoading.isVisible = false
+                                findNavController().navigate(R.id.action_login_to_home)
+                            }
 
-                        is LoginUiState.Error -> {
-                            binding.progressLoading.isVisible = false
-                            binding.btnLogin.isEnabled = true
-                            binding.textError.isVisible = true
-                            binding.textError.text = state.message
+                            is LoginUiState.Error -> {
+                                binding.progressLoading.isVisible = false
+                                binding.btnLogin.isEnabled = true
+                                binding.textError.isVisible = true
+                                binding.textError.text = state.message
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.savePassword.collect { checked ->
+                        if (binding.checkRememberMe.isChecked != checked) {
+                            binding.checkRememberMe.isChecked = checked
                         }
                     }
                 }

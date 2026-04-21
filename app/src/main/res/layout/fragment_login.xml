@@ -67,6 +67,15 @@
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_remember_me"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/login_remember_me"
+            app:layout_constraintStart_toStartOf="@id/input_password"
+            app:layout_constraintTop_toBottomOf="@id/input_password" />
+
         <TextView
             android:id="@+id/text_error"
             android:layout_width="0dp"
@@ -78,7 +87,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_password" />
+            app:layout_constraintTop_toBottomOf="@id/check_remember_me" />
 
         <ProgressBar
             android:id="@+id/progress_loading"

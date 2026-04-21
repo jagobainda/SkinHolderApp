@@ -108,8 +108,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/ic_logo_gamerpay"
-                    app:tint="@color/color_gamerpay" />
+                    android:src="@drawable/ic_logo_gamerpay" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -142,8 +141,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/ic_logo_csfloat"
-                    app:tint="@color/color_csfloat" />
+                    android:src="@drawable/ic_logo_csfloat" />
 
                 <TextView
                     android:layout_width="0dp"

@@ -19,6 +19,13 @@ sealed class LoginUiState {
     data class Error(val message: String) : LoginUiState()
 }
 
+/** One-shot data given to the fragment on first render to pre-fill the form. */
+data class SavedCredentials(
+    val username: String,
+    val password: String,
+    val rememberMe: Boolean
+)
+
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
@@ -30,22 +37,32 @@ class LoginViewModel @Inject constructor(
     val savePassword: StateFlow<Boolean> = _savePassword.asStateFlow()
 
     init {
-        loadSavedCredentials()
-    }
-
-    private fun loadSavedCredentials() {
-        val username = authSessionManager.getUsername()
-        val password = authSessionManager.getSavedPassword()
-
-        if (!username.isNullOrBlank() && !password.isNullOrBlank()) {
-            _uiState.value = LoginUiState.Idle
-            // Set values but don't auto-login - let user click login
-            // In a real scenario with CredentialManager, this would auto-login
+        // If the user previously chose "Recordarme", restore the checkbox state
+        // so the fragment reflects it. Actual text pre-fill is done via
+        // [getSavedCredentials], which the fragment reads once on view create.
+        if (!authSessionManager.getSavedPassword().isNullOrBlank()) {
+            _savePassword.value = true
         }
     }
 
-    fun toggleSavePassword() {
-        _savePassword.value = !_savePassword.value
+    /**
+     * Returns the credentials the fragment should pre-fill on first render, or
+     * `null` if there is nothing saved.
+     */
+    fun getSavedCredentials(): SavedCredentials? {
+        val username = authSessionManager.getUsername()
+        val password = authSessionManager.getSavedPassword()
+        return when {
+            !username.isNullOrBlank() && !password.isNullOrBlank() ->
+                SavedCredentials(username, password, rememberMe = true)
+            !username.isNullOrBlank() ->
+                SavedCredentials(username, password = "", rememberMe = false)
+            else -> null
+        }
+    }
+
+    fun setSavePassword(value: Boolean) {
+        _savePassword.value = value
     }
 
     fun login(username: String, password: String) {

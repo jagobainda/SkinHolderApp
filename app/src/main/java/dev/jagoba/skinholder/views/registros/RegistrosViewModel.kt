@@ -18,6 +18,7 @@ import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
 import dev.jagoba.skinholder.models.items.ItemPrecio
 import dev.jagoba.skinholder.models.registros.Registro
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -300,6 +301,8 @@ class RegistrosViewModel @Inject constructor(
                         )
                     }
                     _consultaState.value = ConsultaState.Loading(progreso = progreso, total = total)
+
+                    delay(3000)
                 }
 
                 val registro = Registro(

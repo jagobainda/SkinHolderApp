@@ -167,6 +167,8 @@ class RegistrosFragment : Fragment(), RegistroActions {
                             }
                             is RegistrosUiState.Loaded -> {
                                 binding.progressLoading.isVisible = false
+                                binding.recyclerRegistros.isVisible = true
+                                binding.layoutEmpty.isVisible = false
                             }
                             is RegistrosUiState.Empty -> {
                                 binding.progressLoading.isVisible = false

@@ -3,8 +3,9 @@ package dev.jagoba.skinholder.dataservice.repository
 import dev.jagoba.skinholder.dataservice.api.ExternalApiService
 import dev.jagoba.skinholder.models.steam.GamerPayItemInfo
 import dev.jagoba.skinholder.models.steam.SteamItemInfo
+import dev.jagoba.skinholder.models.steam.SteamPriceQueueResponse
+import dev.jagoba.skinholder.models.steam.SteamPriceTaskStatus
 import kotlinx.coroutines.delay
-import org.json.JSONObject
 import javax.inject.Inject
 
 class ExternalRepository @Inject constructor(
@@ -29,11 +30,11 @@ class ExternalRepository @Inject constructor(
         }
     }
 
-    suspend fun getSteamPrice(steamHashName: String): Result<String> {
+    suspend fun getSteamPrice(steamHashName: String): Result<SteamPriceQueueResponse> {
         return try {
             val response = api.getSteamPrice(steamHashName)
             if (response.isSuccessful) {
-                Result.success(response.body() ?: "")
+                Result.success(response.body() ?: SteamPriceQueueResponse())
             } else {
                 Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
             }
@@ -42,11 +43,11 @@ class ExternalRepository @Inject constructor(
         }
     }
 
-    suspend fun getSteamPriceStatus(taskId: String): Result<String> {
+    suspend fun getSteamPriceStatus(taskId: String): Result<SteamPriceTaskStatus> {
         return try {
             val response = api.getSteamPriceStatus(taskId)
             if (response.isSuccessful) {
-                Result.success(response.body() ?: "")
+                Result.success(response.body() ?: SteamPriceTaskStatus())
             } else {
                 Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
             }
@@ -84,12 +85,10 @@ class ExternalRepository @Inject constructor(
 
         return try {
             val queueResponse = api.getSteamPrice(steamHashName)
+            // El controlador devuelve 202 Accepted (no 2xx "OK"), así que isSuccessful es true (200..299).
             if (!queueResponse.isSuccessful) return errorResponse
 
-            val queueBody = queueResponse.body().orEmpty()
-            val taskId = runCatching { JSONObject(queueBody).optString("taskId") }
-                .getOrNull()
-                ?.takeIf { it.isNotBlank() }
+            val taskId = queueResponse.body()?.taskId?.takeIf { it.isNotBlank() }
                 ?: return errorResponse
 
             var attempts = 0
@@ -99,13 +98,11 @@ class ExternalRepository @Inject constructor(
                 val statusResponse = api.getSteamPriceStatus(taskId)
                 if (!statusResponse.isSuccessful) return errorResponse
 
-                val body = statusResponse.body().orEmpty()
-                val json = runCatching { JSONObject(body) }.getOrNull() ?: return errorResponse
-                val status = json.optString("status")
+                val body = statusResponse.body() ?: return errorResponse
 
-                when (status) {
+                when (body.status) {
                     "completed" -> {
-                        val price = if (json.isNull("price")) -1.0 else json.optDouble("price", -1.0)
+                        val price = body.price ?: -1.0
                         return SteamItemInfo(
                             hashName = steamHashName,
                             price = price,

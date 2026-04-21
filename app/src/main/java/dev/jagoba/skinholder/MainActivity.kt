@@ -5,10 +5,12 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -41,38 +43,49 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
         val navView: BottomNavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        // Inflate graph manually so we can pick the start destination based on
+        // the current authentication state. This prevents the home fragment
+        // (and its auto-refreshing dashboard ViewModel) from being instantiated
+        // when there is no valid session, which was the source of crashes when
+        // the saved token had already expired.
+        val graph = navController.navInflater.inflate(R.navigation.mobile_navigation)
+        graph.setStartDestination(
+            if (authSessionManager.isLoggedIn()) R.id.navigation_home
+            else R.id.navigation_login
+        )
+        navController.graph = graph
 
         navView.setupWithNavController(navController)
 
         // Hide bottom nav on login screen
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.navigation_login) {
-                navView.visibility = View.GONE
+            navView.visibility = if (destination.id == R.id.navigation_login) {
+                View.GONE
             } else {
-                navView.visibility = View.VISIBLE
+                View.VISIBLE
             }
         }
 
-        // Validate token and redirect to login if not authenticated
-        lifecycleScope.launch {
-            if (authSessionManager.isLoggedIn()) {
-                // Validate token before allowing access
-                authRepository.validateToken().fold(
-                    onSuccess = { isValid ->
-                        if (!isValid) {
-                            authSessionManager.clearSession()
-                            navController.navigate(R.id.navigation_login)
-                        }
-                    },
-                    onFailure = {
-                        // On network error, assume token might still be valid
-                        // but show warning if critical operations fail
-                    }
-                )
-            } else {
-                navController.navigate(R.id.navigation_login)
+        // Validate the saved token in background. We don't act on the result
+        // here: if the token is invalid the AuthInterceptor will throw a
+        // SessionExpiredException, clear the session and notify the
+        // SessionExpiredNotifier. The collector below handles navigation,
+        // ensuring there is a single source of truth and no duplicate
+        // navigate calls.
+        if (authSessionManager.isLoggedIn()) {
+            lifecycleScope.launch {
+                runCatching { authRepository.validateToken() }
             }
         }
 
@@ -86,12 +99,12 @@ class MainActivity : AppCompatActivity() {
                         }
                         is GlobalEvent.SessionExpired -> {
                             authSessionManager.clearSession()
-                            Snackbar.make(
-                                binding.container,
-                                getString(R.string.session_expired),
-                                Snackbar.LENGTH_LONG
-                            ).show()
                             if (navController.currentDestination?.id != R.id.navigation_login) {
+                                Snackbar.make(
+                                    binding.container,
+                                    getString(R.string.session_expired),
+                                    Snackbar.LENGTH_LONG
+                                ).show()
                                 navController.navigate(R.id.navigation_login) {
                                     popUpTo(navController.graph.id) { inclusive = true }
                                 }

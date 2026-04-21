@@ -62,8 +62,7 @@
                 android:contentDescription="@string/platform_gamerpay"
                 android:padding="6dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_logo_gamerpay"
-                app:tint="@color/platform_toggle_icon_tint" />
+                android:src="@drawable/ic_logo_gamerpay" />
 
             <ImageButton
                 android:id="@+id/btn_platform_csfloat"
@@ -74,8 +73,7 @@
                 android:contentDescription="@string/platform_csfloat"
                 android:padding="6dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_logo_csfloat"
-                app:tint="@color/platform_toggle_icon_tint" />
+                android:src="@drawable/ic_logo_csfloat" />
         </LinearLayout>
 
         <!-- Last week row -->
