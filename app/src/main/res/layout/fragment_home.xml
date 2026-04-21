@@ -14,7 +14,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -23,9 +24,10 @@
                 android:id="@+id/text_greeting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:textColor="@color/on_surface_variant"
-                android:textSize="16sp"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/on_surface"
+                android:textSize="24sp"
+                android:textStyle="bold"
                 tools:text="Hola, usuario" />
 
             <!-- ===== Skeleton (Loading) ===== -->
@@ -40,7 +42,6 @@
                 <include layout="@layout/card_skeleton_stats" />
                 <include layout="@layout/card_skeleton_stats" />
                 <include layout="@layout/card_skeleton_stats" />
-                <include layout="@layout/card_skeleton_stats" />
             </LinearLayout>
 
             <!-- ===== Content (Success) ===== -->
@@ -51,10 +52,6 @@
                 android:orientation="vertical"
                 android:visibility="gone"
                 tools:visibility="visible">
-
-                <include
-                    android:id="@+id/include_connection"
-                    layout="@layout/card_connection_stats" />
 
                 <include
                     android:id="@+id/include_last_registry"

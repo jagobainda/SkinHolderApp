@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -14,13 +17,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import dev.jagoba.skinholder.R
 import dev.jagoba.skinholder.core.GlobalViewModel
-import dev.jagoba.skinholder.databinding.CardConnectionStatsBinding
 import dev.jagoba.skinholder.databinding.CardLastRegistryStatsBinding
 import dev.jagoba.skinholder.databinding.CardLatencyStatsBinding
 import dev.jagoba.skinholder.databinding.CardVarianceStatsBinding
 import dev.jagoba.skinholder.databinding.FragmentHomeBinding
 import dev.jagoba.skinholder.dataservice.repository.DashboardRepository
-import dev.jagoba.skinholder.models.dashboard.ConnectionStats
 import dev.jagoba.skinholder.models.dashboard.DashboardStats
 import dev.jagoba.skinholder.models.dashboard.LastRegistryStats
 import dev.jagoba.skinholder.models.dashboard.LatencyStats
@@ -63,10 +64,19 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     globalViewModel.currentUsername.collect { username ->
-                        binding.textGreeting.text = if (!username.isNullOrBlank()) {
-                            getString(R.string.welcome_greeting, username)
+                        if (!username.isNullOrBlank()) {
+                            val full = getString(R.string.welcome_greeting, username)
+                            val spannable = SpannableString(full)
+                            val start = full.indexOf(username)
+                            spannable.setSpan(
+                                ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.primary)),
+                                start,
+                                start + username.length,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                            binding.textGreeting.text = spannable
                         } else {
-                            ""
+                            binding.textGreeting.text = ""
                         }
                     }
                 }
@@ -89,7 +99,6 @@ class HomeFragment : Fragment() {
                 binding.groupContent.visibility = View.VISIBLE
                 binding.groupError.visibility = View.GONE
                 lastStats = state.stats
-                bindConnection(binding.includeConnection, state.stats.connection)
                 bindLastRegistry(binding.includeLastRegistry, state.stats.lastRegistry)
                 bindLatency(binding.includeLatency, state.stats.latency)
                 bindVariance(binding.includeVariance, state.stats.variance, selectedPlatform)
@@ -101,34 +110,6 @@ class HomeFragment : Fragment() {
                 binding.textErrorMessage.text = state.message
             }
         }
-    }
-
-    // ---------- Connection ----------
-
-    private fun bindConnection(b: CardConnectionStatsBinding, stats: ConnectionStats) {
-        val ctx = requireContext()
-        val isActive = stats.status == ConnectionStats.STATUS_ACTIVE
-        val statusColor = ContextCompat.getColor(
-            ctx,
-            if (isActive) R.color.status_success else R.color.status_error
-        )
-        b.iconStatus.setImageResource(
-            if (isActive) R.drawable.ic_check_circle else R.drawable.ic_cancel_circle
-        )
-        b.iconStatus.imageTintList = android.content.res.ColorStateList.valueOf(statusColor)
-        b.textStatus.setTextColor(statusColor)
-        b.textStatus.setText(
-            if (isActive) R.string.dashboard_connection_active
-            else R.string.dashboard_connection_inactive
-        )
-
-        b.textPing.text = if (stats.ping == DashboardRepository.PING_FAILED) {
-            getString(R.string.dashboard_na)
-        } else {
-            getString(R.string.dashboard_value_ms, stats.ping.toInt())
-        }
-
-        b.textUptime.text = getString(R.string.dashboard_value_hours, stats.uptime.toInt())
     }
 
     // ---------- Last Registry ----------
