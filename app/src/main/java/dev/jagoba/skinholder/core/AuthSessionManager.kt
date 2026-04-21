@@ -72,6 +72,19 @@ class AuthSessionManager @Inject constructor(
         return now
     }
 
+    /**
+     * Clears only the auth token and session metadata, preserving saved credentials
+     * so the login form can be pre-filled after an expired session.
+     * Use this from the interceptor on 401. Use [clearSession] for explicit logout.
+     */
+    fun clearAuthToken() {
+        prefs.edit()
+            .remove(KEY_TOKEN)
+            .remove(KEY_USER_ID)
+            .remove(KEY_APP_START_TIME)
+            .apply()
+    }
+
     fun clearSession() {
         prefs.edit()
             .remove(KEY_TOKEN)

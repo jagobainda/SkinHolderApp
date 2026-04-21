@@ -35,18 +35,14 @@ class HomeViewModel @Inject constructor(
      */
     fun loadDashboard() {
         viewModelScope.launch(exceptionHandler) {
-            if (_uiState.value !is DashboardUiState.Success) {
-                _uiState.value = DashboardUiState.Loading
-            }
+            _uiState.value = DashboardUiState.Loading
             try {
                 val stats = dashboardRepository.getDashboardStats()
                 _uiState.value = DashboardUiState.Success(stats)
             } catch (e: Exception) {
-                if (_uiState.value !is DashboardUiState.Success) {
-                    _uiState.value = DashboardUiState.Error(
-                        e.message ?: "Error cargando el dashboard"
-                    )
-                }
+                _uiState.value = DashboardUiState.Error(
+                    e.message ?: "Error cargando el dashboard"
+                )
             }
         }
     }
@@ -60,15 +56,14 @@ class HomeViewModel @Inject constructor(
         refreshJob?.cancel()
         refreshJob = viewModelScope.launch(exceptionHandler) {
             while (isActive) {
+                _uiState.value = DashboardUiState.Loading
                 try {
                     val stats = dashboardRepository.getDashboardStats()
                     _uiState.value = DashboardUiState.Success(stats)
                 } catch (e: Exception) {
-                    if (_uiState.value !is DashboardUiState.Success) {
-                        _uiState.value = DashboardUiState.Error(
-                            e.message ?: "Error cargando el dashboard"
-                        )
-                    }
+                    _uiState.value = DashboardUiState.Error(
+                        e.message ?: "Error cargando el dashboard"
+                    )
                 }
                 delay(REFRESH_INTERVAL_MS)
             }

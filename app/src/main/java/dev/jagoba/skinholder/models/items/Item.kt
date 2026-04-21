@@ -3,12 +3,12 @@ package dev.jagoba.skinholder.models.items
 import com.google.gson.annotations.SerializedName
 
 data class Item(
-    @SerializedName("itemId")
+    @SerializedName(value = "itemId", alternate = ["itemid", "ItemId"])
     val itemId: Int = 0,
-    @SerializedName("nombre")
-    val nombre: String = "",
-    @SerializedName("hashNameSteam")
-    val hashNameSteam: String = "",
-    @SerializedName("gamerPayNombre")
-    val gamerPayNombre: String = ""
+    @SerializedName(value = "nombre", alternate = ["Nombre"])
+    val nombre: String? = null,
+    @SerializedName(value = "hashNameSteam", alternate = ["HashNameSteam", "hashNamesteam"])
+    val hashNameSteam: String? = null,
+    @SerializedName(value = "gamerPayNombre", alternate = ["GamerPayNombre"])
+    val gamerPayNombre: String? = null
 )

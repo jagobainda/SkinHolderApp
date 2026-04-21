@@ -69,7 +69,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
             val isListEmpty = loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0
             val isLoading = loadState.refresh is LoadState.Loading
 
-            binding.progressLoading.isVisible = isLoading
+            binding.skeletonLoading.isVisible = isLoading
             binding.recyclerRegistros.isVisible = !isLoading && !isListEmpty
             binding.layoutEmpty.isVisible = isListEmpty && !isLoading
                     && viewModel.uiState.value !is RegistrosUiState.Error
@@ -161,22 +161,22 @@ class RegistrosFragment : Fragment(), RegistroActions {
                         binding.swipeRefresh.isRefreshing = false
                         when (state) {
                             is RegistrosUiState.Loading -> {
-                                binding.progressLoading.isVisible = true
+                                binding.skeletonLoading.isVisible = true
                                 binding.recyclerRegistros.isVisible = false
                                 binding.layoutEmpty.isVisible = false
                             }
                             is RegistrosUiState.Loaded -> {
-                                binding.progressLoading.isVisible = false
+                                binding.skeletonLoading.isVisible = false
                                 binding.recyclerRegistros.isVisible = true
                                 binding.layoutEmpty.isVisible = false
                             }
                             is RegistrosUiState.Empty -> {
-                                binding.progressLoading.isVisible = false
+                                binding.skeletonLoading.isVisible = false
                                 binding.recyclerRegistros.isVisible = false
                                 binding.layoutEmpty.isVisible = true
                             }
                             is RegistrosUiState.Error -> {
-                                binding.progressLoading.isVisible = false
+                                binding.skeletonLoading.isVisible = false
                                 binding.recyclerRegistros.isVisible = false
                                 binding.layoutEmpty.isVisible = false
                                 Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()

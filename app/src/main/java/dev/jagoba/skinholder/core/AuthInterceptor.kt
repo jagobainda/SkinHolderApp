@@ -27,7 +27,7 @@ class AuthInterceptor @Inject constructor(
         if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED
             && outgoingRequest.header("Authorization") != null
         ) {
-            authSessionManager.clearSession()
+            authSessionManager.clearAuthToken()
             sessionExpiredNotifier.notifySessionExpired()
             response.close()
             throw SessionExpiredException()

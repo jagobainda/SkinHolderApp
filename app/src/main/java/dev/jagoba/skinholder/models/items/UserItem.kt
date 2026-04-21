@@ -12,11 +12,11 @@ data class UserItem(
     @SerializedName("userid")
     val userId: Int = 0,
     @SerializedName("itemName")
-    val itemName: String = "",
+    val itemName: String? = null,
     @SerializedName("steamHashName")
-    val steamHashName: String = "",
+    val steamHashName: String? = null,
     @SerializedName("gamerPayName")
-    val gamerPayName: String = "",
+    val gamerPayName: String? = null,
     @SerializedName("csFloatMarketHashName")
-    val csFloatMarketHashName: String = ""
+    val csFloatMarketHashName: String? = null
 )

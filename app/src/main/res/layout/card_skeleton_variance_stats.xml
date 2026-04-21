@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="157dp"
+    android:layout_height="167dp"
     android:layout_marginBottom="16dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="0dp"
@@ -16,7 +16,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header skeleton -->
+        <!-- Header skeleton con botones de plataforma -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,9 +29,28 @@
                 android:background="@drawable/skeleton_block" />
 
             <View
-                android:layout_width="120dp"
+                android:layout_width="0dp"
                 android:layout_height="16dp"
                 android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/skeleton_block" />
+
+            <View
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/skeleton_block" />
+
+            <View
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/skeleton_block" />
+
+            <View
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="6dp"
                 android:background="@drawable/skeleton_block" />
         </LinearLayout>
 

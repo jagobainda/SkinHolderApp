@@ -238,7 +238,7 @@ class RegistrosViewModel @Inject constructor(
                 }
 
                 val csFloatNames = userItems
-                    .map { it.csFloatMarketHashName.ifBlank { it.itemName } }
+                    .map { it.csFloatMarketHashName.orEmpty().ifBlank { it.itemName.orEmpty() } }
                     .filter { it.isNotBlank() }
                     .distinct()
                 val csFloatPrices = if (csFloatNames.isNotEmpty()) {
@@ -259,9 +259,9 @@ class RegistrosViewModel @Inject constructor(
                 var noListadosGamerPay = 0
 
                 userItems.forEachIndexed { index, userItem ->
-                    val steamHashName = userItem.steamHashName.ifBlank { userItem.itemName }
-                    val gamerPayLookup = userItem.gamerPayName.ifBlank { userItem.itemName }
-                    val csFloatLookup = userItem.csFloatMarketHashName.ifBlank { userItem.itemName }
+                    val steamHashName = userItem.steamHashName.orEmpty().ifBlank { userItem.itemName.orEmpty() }
+                    val gamerPayLookup = userItem.gamerPayName.orEmpty().ifBlank { userItem.itemName.orEmpty() }
+                    val csFloatLookup = userItem.csFloatMarketHashName.orEmpty().ifBlank { userItem.itemName.orEmpty() }
 
                     val steamInfo = externalRepository.getSteamPriceWithPolling(steamHashName)
                     val gamerPayItem = gamerPayPrices.firstOrNull {

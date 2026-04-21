@@ -44,7 +44,7 @@ class UserItemsViewModel @Inject constructor(
                     state.items
                 } else {
                     state.items.filter {
-                        it.userItem.itemName.contains(query, ignoreCase = true)
+                        it.userItem.itemName.orEmpty().contains(query, ignoreCase = true)
                     }
                 }
                 if (filtered.isEmpty()) UserItemsUiState.Empty else UserItemsUiState.Success(filtered)
@@ -66,7 +66,7 @@ class UserItemsViewModel @Inject constructor(
                     if (items.isEmpty()) {
                         _uiState.value = UserItemsUiState.Empty
                     } else {
-                        val sorted = items.sortedBy { it.itemName.lowercase() }
+                        val sorted = items.sortedBy { it.itemName.orEmpty().lowercase() }
                         _uiState.value = UserItemsUiState.Success(
                             sorted.map { UserItemUiModel(it) }
                         )
@@ -165,5 +165,12 @@ class UserItemsViewModel @Inject constructor(
         if (currentState is UserItemsUiState.Success) {
             _uiState.value = UserItemsUiState.Success(transform(currentState.items))
         }
+    }
+
+    fun ownedItemIds(): List<Int> {
+        val state = _uiState.value
+        return if (state is UserItemsUiState.Success) {
+            state.items.map { it.userItem.itemId }
+        } else emptyList()
     }
 }

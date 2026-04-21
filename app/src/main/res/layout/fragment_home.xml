@@ -41,7 +41,7 @@
 
                 <include layout="@layout/card_skeleton_stats" />
                 <include layout="@layout/card_skeleton_stats" />
-                <include layout="@layout/card_skeleton_stats" />
+                <include layout="@layout/card_skeleton_variance_stats" />
             </LinearLayout>
 
             <!-- ===== Content (Success) ===== -->

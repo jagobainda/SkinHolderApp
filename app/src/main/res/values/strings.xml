@@ -23,6 +23,20 @@
     <string name="user_items_save_success">Item actualizado correctamente</string>
     <string name="user_items_save_error">Error al actualizar el item</string>
 
+    <!-- Add UserItem -->
+    <string name="add_item_title">NUEVO ITEM</string>
+    <string name="add_item_search_hint">Buscar items…</string>
+    <string name="add_item_quantity_hint">Cantidad</string>
+    <string name="add_item_button">AÑADIR ITEM</string>
+    <string name="add_item_close">Cerrar</string>
+    <string name="add_item_no_items_found">No se encontraron items</string>
+    <string name="add_item_error_no_items">No hay items disponibles en el catálogo.</string>
+    <string name="add_item_error_select">Selecciona un item de la lista.</string>
+    <string name="add_item_error_already_owned">Ya tienes stock de este item.</string>
+    <string name="add_item_error_invalid_qty">Introduce una cantidad válida.</string>
+    <string name="add_item_error_add">Error al agregar el item.</string>
+    <string name="add_item_success">Item añadido correctamente</string>
+
     <!-- Registros -->
     <string name="title_registros">Registros</string>
     <string name="registros_empty">No hay registros disponibles</string>

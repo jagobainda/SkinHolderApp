@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.jagoba.skinholder.R
 import dev.jagoba.skinholder.databinding.FragmentUserItemsBinding
+import dev.jagoba.skinholder.views.useritems.add.AddUserItemBottomSheet
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -39,6 +40,7 @@ class UserItemsFragment : Fragment(), UserItemActions {
         setupSearch()
         setupSwipeRefresh()
         setupFab()
+        setupAddItemResultListener()
         observeState()
     }
 
@@ -66,8 +68,23 @@ class UserItemsFragment : Fragment(), UserItemActions {
 
     private fun setupFab() {
         binding.fabAddItem.setOnClickListener {
-            // Placeholder for Prompt 6 — add item navigation
-            Snackbar.make(binding.root, "Añadir item (próximamente)", Snackbar.LENGTH_SHORT).show()
+            val ownedIds = viewModel.ownedItemIds()
+            AddUserItemBottomSheet.newInstance(ownedIds)
+                .show(parentFragmentManager, AddUserItemBottomSheet.TAG)
+        }
+    }
+
+    private fun setupAddItemResultListener() {
+        parentFragmentManager.setFragmentResultListener(
+            AddUserItemBottomSheet.RESULT_KEY,
+            viewLifecycleOwner
+        ) { _, _ ->
+            Snackbar.make(
+                binding.root,
+                getString(R.string.add_item_success),
+                Snackbar.LENGTH_SHORT
+            ).show()
+            viewModel.refresh()
         }
     }
 
@@ -78,26 +95,26 @@ class UserItemsFragment : Fragment(), UserItemActions {
                     binding.swipeRefresh.isRefreshing = false
                     when (state) {
                         is UserItemsUiState.Loading -> {
-                            binding.progressLoading.isVisible = true
+                            binding.skeletonLoading.isVisible = true
                             binding.recyclerUserItems.isVisible = false
                             binding.layoutEmpty.isVisible = false
                         }
 
                         is UserItemsUiState.Success -> {
-                            binding.progressLoading.isVisible = false
+                            binding.skeletonLoading.isVisible = false
                             binding.recyclerUserItems.isVisible = true
                             binding.layoutEmpty.isVisible = false
                             adapter.submitList(state.items)
                         }
 
                         is UserItemsUiState.Empty -> {
-                            binding.progressLoading.isVisible = false
+                            binding.skeletonLoading.isVisible = false
                             binding.recyclerUserItems.isVisible = false
                             binding.layoutEmpty.isVisible = true
                         }
 
                         is UserItemsUiState.Error -> {
-                            binding.progressLoading.isVisible = false
+                            binding.skeletonLoading.isVisible = false
                             binding.recyclerUserItems.isVisible = false
                             binding.layoutEmpty.isVisible = false
                             Snackbar.make(
