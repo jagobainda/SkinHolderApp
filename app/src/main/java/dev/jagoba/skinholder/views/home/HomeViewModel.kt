@@ -3,8 +3,10 @@ package dev.jagoba.skinholder.views.home
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.jagoba.skinholder.core.BaseViewModel
+import dev.jagoba.skinholder.core.SessionExpiredException
 import dev.jagoba.skinholder.dataservice.repository.DashboardRepository
 import dev.jagoba.skinholder.models.dashboard.DashboardStats
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -39,6 +41,10 @@ class HomeViewModel @Inject constructor(
             try {
                 val stats = dashboardRepository.getDashboardStats()
                 _uiState.value = DashboardUiState.Success(stats)
+            } catch (e: SessionExpiredException) {
+                return@launch
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 _uiState.value = DashboardUiState.Error(
                     e.message ?: "Error cargando el dashboard"
@@ -60,6 +66,10 @@ class HomeViewModel @Inject constructor(
                 try {
                     val stats = dashboardRepository.getDashboardStats()
                     _uiState.value = DashboardUiState.Success(stats)
+                } catch (e: SessionExpiredException) {
+                    return@launch
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     _uiState.value = DashboardUiState.Error(
                         e.message ?: "Error cargando el dashboard"

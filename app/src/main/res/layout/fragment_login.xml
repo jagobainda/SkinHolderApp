@@ -7,7 +7,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="32dp">
 
         <TextView
@@ -32,6 +32,7 @@
             android:layout_marginTop="48dp"
             android:hint="@string/login_username_label"
             app:startIconDrawable="@drawable/ic_person"
+            app:layout_constraintBottom_toTopOf="@id/input_password"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_title">
@@ -54,6 +55,7 @@
             android:hint="@string/login_password_label"
             app:startIconDrawable="@drawable/ic_lock"
             app:endIconMode="password_toggle"
+            app:layout_constraintBottom_toTopOf="@id/check_remember_me"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/input_username">
@@ -73,6 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/login_remember_me"
+            app:layout_constraintBottom_toTopOf="@id/text_error"
             app:layout_constraintStart_toStartOf="@id/input_password"
             app:layout_constraintTop_toBottomOf="@id/input_password" />
 
@@ -85,6 +88,7 @@
             android:textAlignment="center"
             android:textSize="14sp"
             android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/progress_loading"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/check_remember_me" />
@@ -95,6 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/btn_login"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_error" />
@@ -109,6 +114,7 @@
             android:textSize="16sp"
             app:icon="@drawable/ic_login"
             app:iconGravity="textStart"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_register"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/progress_loading" />

@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                             Snackbar.make(binding.container, event.message, Snackbar.LENGTH_LONG).show()
                         }
                         is GlobalEvent.SessionExpired -> {
-                            authSessionManager.clearSession()
+                            authSessionManager.clearAuthToken()
                             if (navController.currentDestination?.id != R.id.navigation_login) {
                                 Snackbar.make(
                                     binding.container,
