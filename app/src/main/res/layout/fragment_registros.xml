@@ -27,26 +27,28 @@
             app:chipIcon="@drawable/ic_date_range"
             app:closeIconEnabled="false" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
         <!-- Sort spinner -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_sort"
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginStart="8dp"
             android:contentDescription="Ordenar"
             app:icon="@drawable/ic_sort" />
 
         <Spinner
             android:id="@+id/spinner_sort"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:minWidth="100dp"
-            android:popupBackground="@color/surface_container" />
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_spinner_anchor"
+            android:dropDownWidth="wrap_content"
+            android:popupBackground="@drawable/bg_spinner_popup"
+            android:popupElevation="8dp"
+            android:overlapAnchor="false"
+            android:spinnerMode="dropdown" />
 
     </LinearLayout>
 

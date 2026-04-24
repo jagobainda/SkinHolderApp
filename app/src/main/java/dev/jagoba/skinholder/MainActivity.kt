@@ -54,11 +54,6 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Inflate graph manually so we can pick the start destination based on
-        // the current authentication state. This prevents the home fragment
-        // (and its auto-refreshing dashboard ViewModel) from being instantiated
-        // when there is no valid session, which was the source of crashes when
-        // the saved token had already expired.
         val graph = navController.navInflater.inflate(R.navigation.mobile_navigation)
         graph.setStartDestination(
             if (authSessionManager.isLoggedIn()) R.id.navigation_home
@@ -77,19 +72,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Validate the saved token in background. We don't act on the result
-        // here: if the token is invalid the AuthInterceptor will throw a
-        // SessionExpiredException, clear the session and notify the
-        // SessionExpiredNotifier. The collector below handles navigation,
-        // ensuring there is a single source of truth and no duplicate
-        // navigate calls.
         if (authSessionManager.isLoggedIn()) {
             lifecycleScope.launch {
                 runCatching { authRepository.validateToken() }
             }
         }
 
-        // Observe global events (errors, session expiry)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 globalViewModel.globalEvents.collect { event ->
@@ -105,14 +93,18 @@ class MainActivity : AppCompatActivity() {
                                     getString(R.string.session_expired),
                                     Snackbar.LENGTH_LONG
                                 ).show()
-                                navController.navigate(R.id.navigation_login) {
-                                    popUpTo(navController.graph.id) { inclusive = true }
-                                }
+                                navigateToLoginFresh(navController)
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun navigateToLoginFresh(navController: androidx.navigation.NavController) {
+        val freshGraph = navController.navInflater.inflate(R.navigation.mobile_navigation)
+        freshGraph.setStartDestination(R.id.navigation_login)
+        navController.setGraph(freshGraph, null)
     }
 }

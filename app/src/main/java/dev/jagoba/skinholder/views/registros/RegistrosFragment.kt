@@ -38,6 +38,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
 
     private val sortFields = SortField.entries.toTypedArray()
     private val chipDateFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
+    private var pendingScrollToTop = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -73,6 +74,11 @@ class RegistrosFragment : Fragment(), RegistroActions {
             binding.recyclerRegistros.isVisible = !isLoading && !isListEmpty
             binding.layoutEmpty.isVisible = isListEmpty && !isLoading
                     && viewModel.uiState.value !is RegistrosUiState.Error
+
+            if (loadState.refresh is LoadState.NotLoading && pendingScrollToTop) {
+                pendingScrollToTop = false
+                binding.recyclerRegistros.scrollToPosition(0)
+            }
         }
     }
 
@@ -83,6 +89,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
                 .build()
 
             picker.addOnPositiveButtonClickListener { selection ->
+                pendingScrollToTop = true
                 viewModel.setDateRange(selection.first, selection.second + 86_399_999L) // end of day
                 updateDateChipText(selection.first, selection.second)
                 binding.chipDateRange.isCloseIconVisible = true
@@ -92,6 +99,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
         }
 
         binding.chipDateRange.setOnCloseIconClickListener {
+            pendingScrollToTop = true
             viewModel.clearDateRange()
             binding.chipDateRange.text = getString(R.string.registros_filter_date)
             binding.chipDateRange.isCloseIconVisible = false
@@ -127,6 +135,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
                 override fun onItemSelected(
                     parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long
                 ) {
+                    pendingScrollToTop = true
                     viewModel.setSortOption(sortFields[position])
                 }
 
@@ -135,6 +144,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
 
         binding.btnSort.setOnClickListener {
             val currentPos = binding.spinnerSort.selectedItemPosition
+            pendingScrollToTop = true
             viewModel.setSortOption(sortFields[currentPos])
         }
     }

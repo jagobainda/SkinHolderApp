@@ -10,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class SessionExpiredNotifier @Inject constructor() {
 
-    private val _sessionExpired = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val _sessionExpired = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
     val sessionExpired: SharedFlow<Unit> = _sessionExpired.asSharedFlow()
 
     private val hasNotified = AtomicBoolean(false)
@@ -23,5 +23,6 @@ class SessionExpiredNotifier @Inject constructor() {
 
     fun reset() {
         hasNotified.set(false)
+        _sessionExpired.resetReplayCache()
     }
 }

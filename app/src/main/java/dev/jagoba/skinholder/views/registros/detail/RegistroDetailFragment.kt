@@ -31,6 +31,7 @@ class RegistroDetailFragment : Fragment() {
     private val sortFields = DetailSortField.entries.toTypedArray()
     private val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     private val displayFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    private var pendingScrollToTop = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -78,6 +79,7 @@ class RegistroDetailFragment : Fragment() {
                 override fun onItemSelected(
                     parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long
                 ) {
+                    pendingScrollToTop = true
                     viewModel.setSortOption(sortFields[position])
                 }
 
@@ -86,6 +88,7 @@ class RegistroDetailFragment : Fragment() {
 
         binding.btnDetailSort.setOnClickListener {
             val currentPos = binding.spinnerDetailSort.selectedItemPosition
+            pendingScrollToTop = true
             viewModel.setSortOption(sortFields[currentPos])
         }
     }
@@ -120,7 +123,13 @@ class RegistroDetailFragment : Fragment() {
                             } else {
                                 binding.recyclerDetailItems.isVisible = true
                                 binding.layoutDetailEmpty.isVisible = false
-                                adapter.submitList(state.items)
+                                val shouldScroll = pendingScrollToTop
+                                pendingScrollToTop = false
+                                adapter.submitList(state.items) {
+                                    if (shouldScroll) {
+                                        binding.recyclerDetailItems.scrollToPosition(0)
+                                    }
+                                }
                             }
                         }
 
