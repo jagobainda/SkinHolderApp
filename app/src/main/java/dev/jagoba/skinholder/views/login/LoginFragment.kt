@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -93,27 +92,23 @@ class LoginFragment : Fragment() {
                     viewModel.uiState.collect { state ->
                         when (state) {
                             is LoginUiState.Idle -> {
-                                binding.progressLoading.isVisible = false
                                 binding.btnLogin.isEnabled = true
-                                binding.textError.isVisible = false
+                                binding.textError.visibility = View.INVISIBLE
                             }
 
                             is LoginUiState.Loading -> {
-                                binding.progressLoading.isVisible = true
                                 binding.btnLogin.isEnabled = false
-                                binding.textError.isVisible = false
+                                binding.textError.visibility = View.INVISIBLE
                             }
 
                             is LoginUiState.Success -> {
-                                binding.progressLoading.isVisible = false
                                 globalViewModel.refreshSessionState()
                                 findNavController().navigate(R.id.action_login_to_home)
                             }
 
                             is LoginUiState.Error -> {
-                                binding.progressLoading.isVisible = false
                                 binding.btnLogin.isEnabled = true
-                                binding.textError.isVisible = true
+                                binding.textError.visibility = View.VISIBLE
                                 binding.textError.text = state.message
                             }
                         }
