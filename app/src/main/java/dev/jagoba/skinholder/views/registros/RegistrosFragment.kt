@@ -69,11 +69,14 @@ class RegistrosFragment : Fragment(), RegistroActions {
         adapter.addLoadStateListener { loadState ->
             val isListEmpty = loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0
             val isLoading = loadState.refresh is LoadState.Loading
+            val vmState = viewModel.uiState.value
+            val isVmLoading = vmState is RegistrosUiState.Loading
+            val showSkeleton = isLoading || isVmLoading
 
-            binding.skeletonLoading.isVisible = isLoading
-            binding.recyclerRegistros.isVisible = !isLoading && !isListEmpty
-            binding.layoutEmpty.isVisible = isListEmpty && !isLoading
-                    && viewModel.uiState.value !is RegistrosUiState.Error
+            binding.skeletonLoading.isVisible = showSkeleton
+            binding.recyclerRegistros.isVisible = !showSkeleton && !isListEmpty
+            binding.layoutEmpty.isVisible = isListEmpty && !showSkeleton
+                    && vmState !is RegistrosUiState.Error
 
             if (loadState.refresh is LoadState.NotLoading && pendingScrollToTop) {
                 pendingScrollToTop = false

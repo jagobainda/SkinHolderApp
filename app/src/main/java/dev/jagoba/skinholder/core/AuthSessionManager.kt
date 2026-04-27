@@ -2,9 +2,11 @@ package dev.jagoba.skinholder.core
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Base64
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -59,6 +61,35 @@ class AuthSessionManager @Inject constructor(
     fun getUserId(): Int = prefs.getInt(KEY_USER_ID, 0)
 
     fun isLoggedIn(): Boolean = !getToken().isNullOrBlank()
+
+    /**
+     * Returns the absolute expiration time (epoch millis) of the current JWT token,
+     * decoded from its `exp` claim. Returns `null` if there is no token, the token
+     * is malformed, or the claim is missing.
+     */
+    fun getTokenExpiryMillis(): Long? {
+        val token = getToken() ?: return null
+        return try {
+            val parts = token.split(".")
+            if (parts.size < 2) return null
+            val flags = Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
+            val payload = String(Base64.decode(parts[1], flags), Charsets.UTF_8)
+            val exp = JSONObject(payload).optLong("exp", 0L)
+            if (exp > 0L) exp * 1000L else null
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    /**
+     * Returns `true` if the current token is present and its `exp` claim is in the
+     * past. Returns `false` if there is no token or the expiration cannot be read
+     * (in which case server-side validation should be used).
+     */
+    fun isTokenExpired(): Boolean {
+        val expiry = getTokenExpiryMillis() ?: return false
+        return System.currentTimeMillis() >= expiry
+    }
 
     /**
      * Returns the timestamp (epoch millis) at which the current app session was first started.

@@ -1,6 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Base application theme (dark-only, matches SkinHolderDesktop) -->
     <style name="Theme.SkinHolderApp" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Primary -->
         <item name="colorPrimary">@color/primary</item>
@@ -51,12 +50,10 @@
         <item name="snackbarStyle">@style/Widget.SkinHolder.Snackbar</item>
     </style>
 
-    <!-- Splash theme -->
     <style name="Theme.SkinHolderApp.Splash" parent="Theme.SkinHolderApp">
         <item name="android:windowBackground">@color/splash_background</item>
     </style>
 
-    <!-- Bottom Navigation -->
     <style name="Widget.SkinHolder.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
         <item name="backgroundTint">@color/nav_bar</item>
         <item name="itemIconTint">@color/bottom_nav_item_color</item>
@@ -69,9 +66,13 @@
         <item name="android:color">@color/primary_container</item>
     </style>
 
-    <!-- Snackbar -->
     <style name="Widget.SkinHolder.Snackbar" parent="Widget.Material3.Snackbar">
         <item name="backgroundTint">@color/surface_container</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.SkinHolder.Snackbar</item>
+    </style>
+
+    <style name="ThemeOverlay.SkinHolder.Snackbar" parent="">
+        <item name="colorOnSurface">@color/on_surface</item>
     </style>
 
     <!-- Card: neutral gray background, no M3 primary color tint from elevation -->

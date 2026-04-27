@@ -18,8 +18,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.jagoba.skinholder.core.AuthSessionManager
 import dev.jagoba.skinholder.core.GlobalEvent
 import dev.jagoba.skinholder.core.GlobalViewModel
+import dev.jagoba.skinholder.core.SessionExpiredNotifier
 import dev.jagoba.skinholder.databinding.ActivityMainBinding
 import dev.jagoba.skinholder.dataservice.repository.AuthRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,7 +37,12 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var authRepository: AuthRepository
 
+    @Inject
+    lateinit var sessionExpiredNotifier: SessionExpiredNotifier
+
     private val globalViewModel: GlobalViewModel by viewModels()
+
+    private var tokenExpiryWatchdogJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -72,12 +80,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (authSessionManager.isLoggedIn()) {
-            lifecycleScope.launch {
-                runCatching { authRepository.validateToken() }
-            }
-        }
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 globalViewModel.globalEvents.collect { event ->
@@ -106,5 +108,53 @@ class MainActivity : AppCompatActivity() {
         val freshGraph = navController.navInflater.inflate(R.navigation.mobile_navigation)
         freshGraph.setStartDestination(R.id.navigation_login)
         navController.setGraph(freshGraph, null)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        startTokenExpiryWatchdog()
+    }
+
+    override fun onStop() {
+        tokenExpiryWatchdogJob?.cancel()
+        tokenExpiryWatchdogJob = null
+        super.onStop()
+    }
+
+    /**
+     * While the app is in the foreground, proactively detect token expiration so
+     * the user is sent to the login screen without needing to relaunch the app.
+     *
+     * Strategy:
+     *  1. If the JWT `exp` is already in the past, notify immediately.
+     *  2. Otherwise, schedule a delay until that exact moment and notify then.
+     *  3. As a safety net (clock skew / missing exp claim), also re-validate the
+     *     token against the server on every foreground entry.
+     */
+    private fun startTokenExpiryWatchdog() {
+        tokenExpiryWatchdogJob?.cancel()
+        if (!authSessionManager.isLoggedIn()) return
+
+        if (authSessionManager.isTokenExpired()) {
+            sessionExpiredNotifier.notifySessionExpired()
+            return
+        }
+
+        tokenExpiryWatchdogJob = lifecycleScope.launch {
+            // Confirm with the server in case the local clock is wrong or the
+            // token was revoked server-side. The interceptor handles 401s.
+            runCatching { authRepository.validateToken() }
+
+            val expiry = authSessionManager.getTokenExpiryMillis()
+            if (expiry != null) {
+                val waitMs = expiry - System.currentTimeMillis()
+                if (waitMs > 0L) {
+                    delay(waitMs)
+                }
+                if (authSessionManager.isLoggedIn()) {
+                    sessionExpiredNotifier.notifySessionExpired()
+                }
+            }
+        }
     }
 }
