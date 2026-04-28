@@ -139,7 +139,9 @@ class RegistroDetailFragment : Fragment() {
                             binding.layoutSort.isVisible = false
                             binding.recyclerDetailItems.isVisible = false
                             binding.layoutDetailEmpty.isVisible = false
-                            Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG)
+                                .setAnchorView(requireActivity().findViewById(R.id.nav_view))
+                                .show()
                         }
                     }
                 }

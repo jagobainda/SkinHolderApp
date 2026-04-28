@@ -1,6 +1,7 @@
 package dev.jagoba.skinholder.dataservice.repository
 
 import dev.jagoba.skinholder.dataservice.api.ExternalApiService
+import dev.jagoba.skinholder.dataservice.api.GamerPayApi
 import dev.jagoba.skinholder.models.steam.GamerPayItemInfo
 import dev.jagoba.skinholder.models.steam.SteamItemInfo
 import dev.jagoba.skinholder.models.steam.SteamPriceQueueResponse
@@ -9,7 +10,8 @@ import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class ExternalRepository @Inject constructor(
-    private val api: ExternalApiService
+    private val api: ExternalApiService,
+    private val gamerPayApi: GamerPayApi
 ) {
 
     private companion object {
@@ -19,12 +21,7 @@ class ExternalRepository @Inject constructor(
 
     suspend fun getGamerPayPrices(): Result<List<GamerPayItemInfo>> {
         return try {
-            val response = api.getGamerPayPrices()
-            if (response.isSuccessful) {
-                Result.success(response.body() ?: emptyList())
-            } else {
-                Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
-            }
+            Result.success(gamerPayApi.fetchPrices())
         } catch (e: Exception) {
             Result.failure(e)
         }

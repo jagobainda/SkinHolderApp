@@ -83,7 +83,7 @@ class UserItemsFragment : Fragment(), UserItemActions {
                 binding.root,
                 getString(R.string.add_item_success),
                 Snackbar.LENGTH_SHORT
-            ).show()
+            ).setAnchorView(binding.fabAddItem).show()
             viewModel.refresh()
         }
     }
@@ -121,7 +121,7 @@ class UserItemsFragment : Fragment(), UserItemActions {
                                 binding.root,
                                 state.message,
                                 Snackbar.LENGTH_LONG
-                            ).show()
+                            ).setAnchorView(binding.fabAddItem).show()
                         }
                     }
                 }

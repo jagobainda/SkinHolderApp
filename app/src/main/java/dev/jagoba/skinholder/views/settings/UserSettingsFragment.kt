@@ -107,7 +107,9 @@ class UserSettingsFragment : Fragment() {
                             is UserSettingsUiState.Error -> {
                                 binding.progressLoading.isVisible = false
                                 binding.layoutContent.isVisible = true
-                                Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                                Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG)
+                                    .setAnchorView(requireActivity().findViewById(R.id.nav_view))
+                                    .show()
                             }
                         }
                     }

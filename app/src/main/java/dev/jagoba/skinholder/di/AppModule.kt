@@ -56,7 +56,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideExternalRepository(api: ExternalApiService): ExternalRepository = ExternalRepository(api)
+    fun provideExternalRepository(
+        api: ExternalApiService,
+        gamerPayApi: dev.jagoba.skinholder.dataservice.api.GamerPayApi
+    ): ExternalRepository = ExternalRepository(api, gamerPayApi)
 
     @Provides
     @Singleton

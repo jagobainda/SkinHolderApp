@@ -48,6 +48,8 @@
 
         <!-- Snackbar styling -->
         <item name="snackbarStyle">@style/Widget.SkinHolder.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.SkinHolder.Snackbar.TextView</item>
+        <item name="snackbarButtonStyle">@style/Widget.SkinHolder.Snackbar.Button</item>
     </style>
 
     <style name="Theme.SkinHolderApp.Splash" parent="Theme.SkinHolderApp">
@@ -72,7 +74,19 @@
     </style>
 
     <style name="ThemeOverlay.SkinHolder.Snackbar" parent="">
+        <item name="colorSurface">@color/surface_container</item>
         <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorSurfaceInverse">@color/surface_container</item>
+        <item name="colorOnSurfaceInverse">@color/on_surface</item>
+        <item name="colorPrimaryInverse">@color/primary</item>
+    </style>
+
+    <style name="Widget.SkinHolder.Snackbar.TextView" parent="Widget.Material3.Snackbar.TextView">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="Widget.SkinHolder.Snackbar.Button" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/primary</item>
     </style>
 
     <!-- Card: neutral gray background, no M3 primary color tint from elevation -->

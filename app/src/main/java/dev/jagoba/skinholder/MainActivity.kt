@@ -85,7 +85,9 @@ class MainActivity : AppCompatActivity() {
                 globalViewModel.globalEvents.collect { event ->
                     when (event) {
                         is GlobalEvent.ShowError -> {
-                            Snackbar.make(binding.container, event.message, Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(binding.container, event.message, Snackbar.LENGTH_LONG)
+                                .setAnchorView(binding.navView)
+                                .show()
                         }
                         is GlobalEvent.SessionExpired -> {
                             authSessionManager.clearAuthToken()
@@ -94,10 +96,23 @@ class MainActivity : AppCompatActivity() {
                                     binding.container,
                                     getString(R.string.session_expired),
                                     Snackbar.LENGTH_LONG
-                                ).show()
+                                ).setAnchorView(binding.navView).show()
                                 navigateToLoginFresh(navController)
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                globalViewModel.isAuthenticated.collect { authenticated ->
+                    if (authenticated) {
+                        startTokenExpiryWatchdog()
+                    } else {
+                        tokenExpiryWatchdogJob?.cancel()
+                        tokenExpiryWatchdogJob = null
                     }
                 }
             }
@@ -108,11 +123,6 @@ class MainActivity : AppCompatActivity() {
         val freshGraph = navController.navInflater.inflate(R.navigation.mobile_navigation)
         freshGraph.setStartDestination(R.id.navigation_login)
         navController.setGraph(freshGraph, null)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        startTokenExpiryWatchdog()
     }
 
     override fun onStop() {

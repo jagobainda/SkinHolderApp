@@ -192,7 +192,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
                                 binding.skeletonLoading.isVisible = false
                                 binding.recyclerRegistros.isVisible = false
                                 binding.layoutEmpty.isVisible = false
-                                Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                                showAnchoredSnackbar(state.message, Snackbar.LENGTH_LONG)
                             }
                         }
                     }
@@ -248,9 +248,9 @@ class RegistrosFragment : Fragment(), RegistroActions {
                 viewModel.events.collect { event ->
                     when (event) {
                         is RegistrosEvent.Deleted ->
-                            Snackbar.make(binding.root, event.message, Snackbar.LENGTH_SHORT).show()
+                            showAnchoredSnackbar(event.message, Snackbar.LENGTH_SHORT)
                         is RegistrosEvent.DeleteError ->
-                            Snackbar.make(binding.root, event.message, Snackbar.LENGTH_LONG).show()
+                            showAnchoredSnackbar(event.message, Snackbar.LENGTH_LONG)
                         is RegistrosEvent.ConsultaSuccess ->
                             showColoredSnackbar(
                                 getString(R.string.registros_consulta_success),
@@ -269,6 +269,12 @@ class RegistrosFragment : Fragment(), RegistroActions {
             .setAnchorView(binding.fabConsultar)
             .setBackgroundTint(ContextCompat.getColor(requireContext(), backgroundColorRes))
             .setTextColor(ContextCompat.getColor(requireContext(), R.color.on_error))
+            .show()
+    }
+
+    private fun showAnchoredSnackbar(message: String, duration: Int) {
+        Snackbar.make(binding.root, message, duration)
+            .setAnchorView(binding.fabConsultar)
             .show()
     }
 
