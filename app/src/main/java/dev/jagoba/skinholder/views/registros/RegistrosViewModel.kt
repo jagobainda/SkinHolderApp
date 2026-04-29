@@ -1,5 +1,6 @@
 package dev.jagoba.skinholder.views.registros
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -236,6 +237,7 @@ class RegistrosViewModel @Inject constructor(
                     if (error is SessionExpiredException) return@launch
                     emptyList()
                 }
+                Log.d("RegistrosVM", "GamerPay prices loaded: ${gamerPayPrices.size}")
 
                 val csFloatNames = userItems
                     .map { it.csFloatMarketHashName.orEmpty().ifBlank { it.itemName.orEmpty() } }
@@ -268,6 +270,11 @@ class RegistrosViewModel @Inject constructor(
                         it.name.trim().equals(gamerPayLookup.trim(), ignoreCase = true)
                     }
                     val csFloatPrice = csFloatPrices[csFloatLookup] ?: 0.0
+
+                    Log.d(
+                        "RegistrosVM",
+                        "item=$gamerPayLookup gp=${gamerPayItem?.price ?: "null"} steam=${steamInfo.price} cs=$csFloatPrice cant=${userItem.cantidad}"
+                    )
 
                     if (steamInfo.isWarning) warningSteam++
                     if (steamInfo.isError) errorSteam++
