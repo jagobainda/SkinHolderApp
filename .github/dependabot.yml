@@ -1,0 +1,23 @@
+version: 2
+updates:
+    # Gradle dependencies (AGP, Kotlin, Hilt, Retrofit, OkHttp, AndroidX...).
+    # Dependabot reads gradle/libs.versions.toml, which is where every version
+    # is declared. Gradle has no equivalent of `npm audit`, so this entry is
+    # also the channel through which security advisories arrive.
+    - package-ecosystem: gradle
+      directory: /
+      schedule:
+          interval: weekly
+      open-pull-requests-limit: 10
+      groups:
+          # Agrupa las actualizaciones menores/patch en un solo PR para reducir ruido.
+          minor-and-patch:
+              update-types:
+                  - minor
+                  - patch
+
+    # Las propias actions usadas en los workflows (checkout, setup-java...).
+    - package-ecosystem: github-actions
+      directory: /
+      schedule:
+          interval: weekly

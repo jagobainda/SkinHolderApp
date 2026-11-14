@@ -1,0 +1,12 @@
+# GitHub solicita review automáticamente al owner cuando una PR toca estos
+# ficheros. Sustituye a la opción `reviewers` de dependabot.yml (deprecada).
+
+# Gradle dependencies (Dependabot PRs from the gradle ecosystem). The version
+# catalogue is where almost all of them land; the build scripts, the ones that
+# touch a plugin.
+/gradle/libs.versions.toml @jagobainda
+*.gradle.kts @jagobainda
+/gradle/wrapper/ @jagobainda
+
+# Workflows y actions (PRs de Dependabot del ecosistema github-actions)
+/.github/workflows/ @jagobainda
