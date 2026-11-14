@@ -2,7 +2,6 @@ package dev.jagoba.skinholder.views.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -21,10 +20,10 @@ class ConfirmationDialogFragment : DialogFragment() {
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton(confirmText) { _, _ ->
-                setFragmentResult(requestKey, bundleOf(RESULT_KEY to true))
+                setFragmentResult(requestKey, Bundle().apply { putBoolean(RESULT_KEY, true) })
             }
             .setNegativeButton(cancelText) { _, _ ->
-                setFragmentResult(requestKey, bundleOf(RESULT_KEY to false))
+                setFragmentResult(requestKey, Bundle().apply { putBoolean(RESULT_KEY, false) })
             }
             .create()
     }
@@ -47,13 +46,13 @@ class ConfirmationDialogFragment : DialogFragment() {
             requestKey: String = DEFAULT_REQUEST_KEY
         ): ConfirmationDialogFragment {
             return ConfirmationDialogFragment().apply {
-                arguments = bundleOf(
-                    ARG_TITLE to title,
-                    ARG_MESSAGE to message,
-                    ARG_CONFIRM_TEXT to confirmText,
-                    ARG_CANCEL_TEXT to cancelText,
-                    ARG_REQUEST_KEY to requestKey
-                )
+                arguments = Bundle().apply {
+                    putString(ARG_TITLE, title)
+                    putString(ARG_MESSAGE, message)
+                    putString(ARG_CONFIRM_TEXT, confirmText)
+                    putString(ARG_CANCEL_TEXT, cancelText)
+                    putString(ARG_REQUEST_KEY, requestKey)
+                }
             }
         }
     }

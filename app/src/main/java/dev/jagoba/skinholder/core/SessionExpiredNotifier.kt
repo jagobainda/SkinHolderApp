@@ -1,5 +1,6 @@
 package dev.jagoba.skinholder.core
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -21,6 +22,7 @@ class SessionExpiredNotifier @Inject constructor() {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun reset() {
         hasNotified.set(false)
         _sessionExpired.resetReplayCache()

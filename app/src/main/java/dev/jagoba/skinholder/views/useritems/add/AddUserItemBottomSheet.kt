@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
@@ -143,7 +142,7 @@ class AddUserItemBottomSheet : BottomSheetDialogFragment() {
 
         fun newInstance(ownedIds: List<Int>): AddUserItemBottomSheet =
             AddUserItemBottomSheet().apply {
-                arguments = bundleOf(ARG_OWNED_IDS to ownedIds.toIntArray())
+                arguments = Bundle().apply { putIntArray(ARG_OWNED_IDS, ownedIds.toIntArray()) }
             }
     }
 }

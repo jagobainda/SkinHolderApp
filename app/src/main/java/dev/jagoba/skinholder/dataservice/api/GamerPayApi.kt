@@ -51,7 +51,7 @@ class GamerPayApi @Inject constructor() {
                     return@withContext emptyList()
                 }
 
-                val body = response.body?.string().orEmpty()
+                val body = response.body.string()
                 if (body.isBlank()) {
                     Log.w(TAG, "GamerPay returned empty body")
                     return@withContext emptyList()
