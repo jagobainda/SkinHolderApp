@@ -11,6 +11,7 @@ import dev.jagoba.skinholder.dataservice.repository.ItemsRepository
 import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
 import dev.jagoba.skinholder.models.items.Item
 import dev.jagoba.skinholder.models.items.UserItem
+import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed class AddUserItemUiState {
     data object Loading : AddUserItemUiState()
@@ -39,7 +39,7 @@ sealed class AddUserItemEvent {
 class AddUserItemViewModel @Inject constructor(
     private val itemsRepository: ItemsRepository,
     private val userItemRepository: UserItemRepository,
-    private val authSessionManager: AuthSessionManager
+    private val authSessionManager: AuthSessionManager,
 ) : BaseViewModel<AddUserItemUiState>(AddUserItemUiState.Loading) {
 
     val searchQuery = MutableStateFlow("")
@@ -51,17 +51,22 @@ class AddUserItemViewModel @Inject constructor(
 
     private val _events = MutableSharedFlow<AddUserItemEvent>(
         extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val events: SharedFlow<AddUserItemEvent> = _events.asSharedFlow()
 
     val filteredItems: StateFlow<List<Item>> = combine(
-        _uiState, searchQuery, ownedItemIds
+        _uiState,
+        searchQuery,
+        ownedItemIds,
     ) { state, query, owned ->
         val items = (state as? AddUserItemUiState.Ready)?.items.orEmpty()
         val available = items.filter { it.itemId !in owned }
-        if (query.isBlank()) available
-        else available.filter { it.nombre.orEmpty().contains(query, ignoreCase = true) }
+        if (query.isBlank()) {
+            available
+        } else {
+            available.filter { it.nombre.orEmpty().contains(query, ignoreCase = true) }
+        }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
@@ -84,10 +89,10 @@ class AddUserItemViewModel @Inject constructor(
                 onFailure = { error ->
                     if (error !is SessionExpiredException) {
                         _uiState.value = AddUserItemUiState.Error(
-                            error.message ?: "Error inesperado"
+                            error.message ?: "Error inesperado",
                         )
                     }
-                }
+                },
             )
         }
     }
@@ -133,7 +138,7 @@ class AddUserItemViewModel @Inject constructor(
             itemName = selected.nombre.orEmpty(),
             steamHashName = selected.hashNameSteam.orEmpty(),
             gamerPayName = selected.gamerPayNombre.orEmpty(),
-            csFloatMarketHashName = ""
+            csFloatMarketHashName = "",
         )
 
         isSaving.value = true
@@ -152,7 +157,7 @@ class AddUserItemViewModel @Inject constructor(
                     if (error !is SessionExpiredException) {
                         _events.tryEmit(AddUserItemEvent.SaveError)
                     }
-                }
+                },
             )
         }
     }

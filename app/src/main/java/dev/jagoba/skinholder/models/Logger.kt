@@ -10,5 +10,5 @@ data class Logger(
     @SerializedName("logPlaceId")
     val logPlaceId: Int,
     @SerializedName("userId")
-    val userId: Int
+    val userId: Int,
 )

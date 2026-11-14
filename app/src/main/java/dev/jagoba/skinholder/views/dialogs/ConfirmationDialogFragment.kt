@@ -43,16 +43,14 @@ class ConfirmationDialogFragment : DialogFragment() {
             message: String,
             confirmText: String = "Sí",
             cancelText: String = "Cancelar",
-            requestKey: String = DEFAULT_REQUEST_KEY
-        ): ConfirmationDialogFragment {
-            return ConfirmationDialogFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_TITLE, title)
-                    putString(ARG_MESSAGE, message)
-                    putString(ARG_CONFIRM_TEXT, confirmText)
-                    putString(ARG_CANCEL_TEXT, cancelText)
-                    putString(ARG_REQUEST_KEY, requestKey)
-                }
+            requestKey: String = DEFAULT_REQUEST_KEY,
+        ): ConfirmationDialogFragment = ConfirmationDialogFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_TITLE, title)
+                putString(ARG_MESSAGE, message)
+                putString(ARG_CONFIRM_TEXT, confirmText)
+                putString(ARG_CANCEL_TEXT, cancelText)
+                putString(ARG_REQUEST_KEY, requestKey)
             }
         }
     }

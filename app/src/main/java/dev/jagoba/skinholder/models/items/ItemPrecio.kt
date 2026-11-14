@@ -14,5 +14,5 @@ data class ItemPrecio(
     @SerializedName("useritemid")
     val userItemId: Long = 0,
     @SerializedName("registroid")
-    val registroId: Long = 0
+    val registroId: Long = 0,
 )

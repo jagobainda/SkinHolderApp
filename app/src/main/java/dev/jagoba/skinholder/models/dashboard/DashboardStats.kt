@@ -2,28 +2,16 @@ package dev.jagoba.skinholder.models.dashboard
 
 import com.google.gson.annotations.SerializedName
 
-data class ConnectionStats(
-    val status: String,
-    val ping: Long,
-    val uptime: Long
-) {
+data class ConnectionStats(val status: String, val ping: Long, val uptime: Long) {
     companion object {
         const val STATUS_ACTIVE = "active"
         const val STATUS_INACTIVE = "inactive"
     }
 }
 
-data class LastRegistryStats(
-    val totalSteam: Double,
-    val totalGamepay: Double,
-    val totalCsfloat: Double
-)
+data class LastRegistryStats(val totalSteam: Double, val totalGamepay: Double, val totalCsfloat: Double)
 
-data class LatencyStats(
-    val steam: Long,
-    val gamerpay: Long,
-    val csfloat: Long
-)
+data class LatencyStats(val steam: Long, val gamerpay: Long, val csfloat: Long)
 
 data class VarianceStats(
     @SerializedName("weeklyVariancePercentSteam")
@@ -43,7 +31,7 @@ data class VarianceStats(
     @SerializedName("monthlyVariancePercentCSFloat")
     val monthlyVariancePercentCSFloat: Double = 0.0,
     @SerializedName("yearlyVariancePercentCSFloat")
-    val yearlyVariancePercentCSFloat: Double = 0.0
+    val yearlyVariancePercentCSFloat: Double = 0.0,
 ) {
     companion object {
         const val NA_VALUE = -101.0
@@ -54,5 +42,5 @@ data class DashboardStats(
     val connection: ConnectionStats,
     val lastRegistry: LastRegistryStats?,
     val latency: LatencyStats,
-    val variance: VarianceStats
+    val variance: VarianceStats,
 )

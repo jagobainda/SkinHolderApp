@@ -6,16 +6,16 @@ import dev.jagoba.skinholder.models.dashboard.DashboardStats
 import dev.jagoba.skinholder.models.dashboard.LastRegistryStats
 import dev.jagoba.skinholder.models.dashboard.LatencyStats
 import dev.jagoba.skinholder.models.dashboard.VarianceStats
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.system.measureTimeMillis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.system.measureTimeMillis
 
 /**
  * Aggregates the four data sources rendered on the Home dashboard:
@@ -30,7 +30,7 @@ import kotlin.system.measureTimeMillis
 @Singleton
 class DashboardRepository @Inject constructor(
     private val registroRepository: RegistroRepository,
-    private val authSessionManager: AuthSessionManager
+    private val authSessionManager: AuthSessionManager,
 ) {
 
     private val pingClient: OkHttpClient = OkHttpClient.Builder()
@@ -55,14 +55,14 @@ class DashboardRepository @Inject constructor(
         val connection = ConnectionStats(
             status = if (isActive) ConnectionStats.STATUS_ACTIVE else ConnectionStats.STATUS_INACTIVE,
             ping = dbPing,
-            uptime = calculateUptimeHours()
+            uptime = calculateUptimeHours(),
         )
 
         val lastRegistry = lastRegistroResult.getOrNull()?.takeIf { it.registroId > 0L }?.let {
             LastRegistryStats(
                 totalSteam = it.totalSteam,
                 totalGamepay = it.totalGamerPay,
-                totalCsfloat = it.totalCsFloat
+                totalCsfloat = it.totalCsFloat,
             )
         }
 
@@ -72,7 +72,7 @@ class DashboardRepository @Inject constructor(
             connection = connection,
             lastRegistry = lastRegistry,
             latency = externalLatencies,
-            variance = variance
+            variance = variance,
         )
     }
 
@@ -93,7 +93,7 @@ class DashboardRepository @Inject constructor(
         LatencyStats(
             steam = steam.await(),
             gamerpay = gamerpay.await(),
-            csfloat = csfloat.await()
+            csfloat = csfloat.await(),
         )
     }
 

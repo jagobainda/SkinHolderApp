@@ -15,16 +15,17 @@ interface RegistroActions {
     fun onDelete(registroId: Long)
 }
 
-class RegistrosAdapter(
-    private val actions: RegistroActions
-) : PagingDataAdapter<Registro, RegistrosAdapter.ViewHolder>(RegistroDiffCallback()) {
+class RegistrosAdapter(private val actions: RegistroActions) :
+    PagingDataAdapter<Registro, RegistrosAdapter.ViewHolder>(RegistroDiffCallback()) {
 
     private val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     private val displayFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemRegistroBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
+            LayoutInflater.from(parent.context),
+            parent,
+            false,
         )
         return ViewHolder(binding)
     }
@@ -33,9 +34,7 @@ class RegistrosAdapter(
         getItem(position)?.let { holder.bind(it) }
     }
 
-    inner class ViewHolder(
-        private val binding: ItemRegistroBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemRegistroBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(registro: Registro) {
             binding.textFecha.text = formatDate(registro.fechaHora)
@@ -51,27 +50,20 @@ class RegistrosAdapter(
             }
         }
 
-        private fun formatDate(dateStr: String): String {
-            return try {
-                val date = inputFormat.parse(dateStr)
-                date?.let { displayFormat.format(it) } ?: dateStr
-            } catch (_: Exception) {
-                dateStr
-            }
+        private fun formatDate(dateStr: String): String = try {
+            val date = inputFormat.parse(dateStr)
+            date?.let { displayFormat.format(it) } ?: dateStr
+        } catch (_: Exception) {
+            dateStr
         }
 
-        private fun formatPrice(price: Double): String {
-            return String.format(Locale.getDefault(), "%.2f €", price)
-        }
+        private fun formatPrice(price: Double): String = String.format(Locale.getDefault(), "%.2f €", price)
     }
 
     class RegistroDiffCallback : DiffUtil.ItemCallback<Registro>() {
-        override fun areItemsTheSame(oldItem: Registro, newItem: Registro): Boolean {
-            return oldItem.registroId == newItem.registroId
-        }
+        override fun areItemsTheSame(oldItem: Registro, newItem: Registro): Boolean =
+            oldItem.registroId == newItem.registroId
 
-        override fun areContentsTheSame(oldItem: Registro, newItem: Registro): Boolean {
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: Registro, newItem: Registro): Boolean = oldItem == newItem
     }
 }

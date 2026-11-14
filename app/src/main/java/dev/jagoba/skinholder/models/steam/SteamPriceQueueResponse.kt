@@ -8,5 +8,5 @@ data class SteamPriceQueueResponse(
     @SerializedName("status")
     val status: String = "",
     @SerializedName("message")
-    val message: String = ""
+    val message: String = "",
 )

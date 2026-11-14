@@ -18,5 +18,5 @@ data class UserItem(
     @SerializedName("gamerPayName")
     val gamerPayName: String? = null,
     @SerializedName("csFloatMarketHashName")
-    val csFloatMarketHashName: String? = null
+    val csFloatMarketHashName: String? = null,
 )

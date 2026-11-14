@@ -9,13 +9,13 @@ import dev.jagoba.skinholder.dataservice.repository.ItemPrecioRepository
 import dev.jagoba.skinholder.dataservice.repository.RegistroRepository
 import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
 import dev.jagoba.skinholder.models.registros.Registro
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class ItemDetalleUiModel(
     val userItemId: Long,
@@ -23,22 +23,16 @@ data class ItemDetalleUiModel(
     val cantidad: Int,
     val precioSteam: Double,
     val precioGamerPay: Double,
-    val precioCsFloat: Double
+    val precioCsFloat: Double,
 )
 
 enum class DetailSortField { NAME, CANTIDAD, STEAM, GAMERPAY, CSFLOAT }
 
-data class DetailSortOption(
-    val field: DetailSortField = DetailSortField.NAME,
-    val ascending: Boolean = true
-)
+data class DetailSortOption(val field: DetailSortField = DetailSortField.NAME, val ascending: Boolean = true)
 
 sealed class RegistroDetailUiState {
     data object Loading : RegistroDetailUiState()
-    data class Success(
-        val registro: Registro,
-        val items: List<ItemDetalleUiModel>
-    ) : RegistroDetailUiState()
+    data class Success(val registro: Registro, val items: List<ItemDetalleUiModel>) : RegistroDetailUiState()
     data class Error(val message: String) : RegistroDetailUiState()
 }
 
@@ -47,7 +41,7 @@ class RegistroDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val registroRepository: RegistroRepository,
     private val itemPrecioRepository: ItemPrecioRepository,
-    private val userItemRepository: UserItemRepository
+    private val userItemRepository: UserItemRepository,
 ) : BaseViewModel<RegistroDetailUiState>(RegistroDetailUiState.Loading) {
 
     private val registroId: Long = savedStateHandle["registroId"] ?: 0L
@@ -55,13 +49,15 @@ class RegistroDetailViewModel @Inject constructor(
     private val _sortOption = MutableStateFlow(DetailSortOption())
 
     val sortedState: StateFlow<RegistroDetailUiState> = combine(
-        _uiState, _sortOption
+        _uiState,
+        _sortOption,
     ) { state, sort ->
         when (state) {
             is RegistroDetailUiState.Success -> {
                 val sorted = sortItems(state.items, sort)
                 state.copy(items = sorted)
             }
+
             else -> state
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RegistroDetailUiState.Loading)
@@ -79,7 +75,7 @@ class RegistroDetailViewModel @Inject constructor(
                 val error = registrosResult.exceptionOrNull()
                 if (error !is SessionExpiredException) {
                     _uiState.value = RegistroDetailUiState.Error(
-                        error?.message ?: "Error al cargar registros"
+                        error?.message ?: "Error al cargar registros",
                     )
                 }
                 return@launch
@@ -99,7 +95,7 @@ class RegistroDetailViewModel @Inject constructor(
                 val error = preciosResult.exceptionOrNull()
                 if (error !is SessionExpiredException) {
                     _uiState.value = RegistroDetailUiState.Error(
-                        error?.message ?: "Error al cargar precios"
+                        error?.message ?: "Error al cargar precios",
                     )
                 }
                 return@launch
@@ -121,7 +117,7 @@ class RegistroDetailViewModel @Inject constructor(
                     cantidad = userItem?.cantidad ?: 1,
                     precioSteam = precio.precioSteam,
                     precioGamerPay = precio.precioGamerPay,
-                    precioCsFloat = precio.precioCsFloat
+                    precioCsFloat = precio.precioCsFloat,
                 )
             }
 
@@ -138,22 +134,36 @@ class RegistroDetailViewModel @Inject constructor(
         }
     }
 
-    private fun sortItems(items: List<ItemDetalleUiModel>, sort: DetailSortOption): List<ItemDetalleUiModel> {
-        return when (sort.field) {
-            DetailSortField.NAME -> if (sort.ascending) items.sortedBy { it.itemName.lowercase() }
-            else items.sortedByDescending { it.itemName.lowercase() }
+    private fun sortItems(items: List<ItemDetalleUiModel>, sort: DetailSortOption): List<ItemDetalleUiModel> =
+        when (sort.field) {
+            DetailSortField.NAME -> if (sort.ascending) {
+                items.sortedBy { it.itemName.lowercase() }
+            } else {
+                items.sortedByDescending { it.itemName.lowercase() }
+            }
 
-            DetailSortField.CANTIDAD -> if (sort.ascending) items.sortedBy { it.cantidad }
-            else items.sortedByDescending { it.cantidad }
+            DetailSortField.CANTIDAD -> if (sort.ascending) {
+                items.sortedBy { it.cantidad }
+            } else {
+                items.sortedByDescending { it.cantidad }
+            }
 
-            DetailSortField.STEAM -> if (sort.ascending) items.sortedBy { it.precioSteam }
-            else items.sortedByDescending { it.precioSteam }
+            DetailSortField.STEAM -> if (sort.ascending) {
+                items.sortedBy { it.precioSteam }
+            } else {
+                items.sortedByDescending { it.precioSteam }
+            }
 
-            DetailSortField.GAMERPAY -> if (sort.ascending) items.sortedBy { it.precioGamerPay }
-            else items.sortedByDescending { it.precioGamerPay }
+            DetailSortField.GAMERPAY -> if (sort.ascending) {
+                items.sortedBy { it.precioGamerPay }
+            } else {
+                items.sortedByDescending { it.precioGamerPay }
+            }
 
-            DetailSortField.CSFLOAT -> if (sort.ascending) items.sortedBy { it.precioCsFloat }
-            else items.sortedByDescending { it.precioCsFloat }
+            DetailSortField.CSFLOAT -> if (sort.ascending) {
+                items.sortedBy { it.precioCsFloat }
+            } else {
+                items.sortedByDescending { it.precioCsFloat }
+            }
         }
-    }
 }

@@ -6,12 +6,12 @@ import dev.jagoba.skinholder.models.steam.GamerPayItemInfo
 import dev.jagoba.skinholder.models.steam.SteamItemInfo
 import dev.jagoba.skinholder.models.steam.SteamPriceQueueResponse
 import dev.jagoba.skinholder.models.steam.SteamPriceTaskStatus
-import kotlinx.coroutines.delay
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 
 class ExternalRepository @Inject constructor(
     private val api: ExternalApiService,
-    private val gamerPayApi: GamerPayApi
+    private val gamerPayApi: GamerPayApi,
 ) {
 
     private companion object {
@@ -19,51 +19,43 @@ class ExternalRepository @Inject constructor(
         const val MAX_POLLING_ATTEMPTS = 60
     }
 
-    suspend fun getGamerPayPrices(): Result<List<GamerPayItemInfo>> {
-        return try {
-            Result.success(gamerPayApi.fetchPrices())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun getGamerPayPrices(): Result<List<GamerPayItemInfo>> = try {
+        Result.success(gamerPayApi.fetchPrices())
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
-    suspend fun getSteamPrice(steamHashName: String): Result<SteamPriceQueueResponse> {
-        return try {
-            val response = api.getSteamPrice(steamHashName)
-            if (response.isSuccessful) {
-                Result.success(response.body() ?: SteamPriceQueueResponse())
-            } else {
-                Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
+    suspend fun getSteamPrice(steamHashName: String): Result<SteamPriceQueueResponse> = try {
+        val response = api.getSteamPrice(steamHashName)
+        if (response.isSuccessful) {
+            Result.success(response.body() ?: SteamPriceQueueResponse())
+        } else {
+            Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
         }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
-    suspend fun getSteamPriceStatus(taskId: String): Result<SteamPriceTaskStatus> {
-        return try {
-            val response = api.getSteamPriceStatus(taskId)
-            if (response.isSuccessful) {
-                Result.success(response.body() ?: SteamPriceTaskStatus())
-            } else {
-                Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
+    suspend fun getSteamPriceStatus(taskId: String): Result<SteamPriceTaskStatus> = try {
+        val response = api.getSteamPriceStatus(taskId)
+        if (response.isSuccessful) {
+            Result.success(response.body() ?: SteamPriceTaskStatus())
+        } else {
+            Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
         }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
-    suspend fun getCSFloatPrices(itemNames: List<String>): Result<Map<String, Double>> {
-        return try {
-            val response = api.getCSFloatPrices(itemNames)
-            if (response.isSuccessful) {
-                Result.success(response.body() ?: emptyMap())
-            } else {
-                Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
+    suspend fun getCSFloatPrices(itemNames: List<String>): Result<Map<String, Double>> = try {
+        val response = api.getCSFloatPrices(itemNames)
+        if (response.isSuccessful) {
+            Result.success(response.body() ?: emptyMap())
+        } else {
+            Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
         }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
     /**
@@ -77,7 +69,7 @@ class ExternalRepository @Inject constructor(
             hashName = steamHashName,
             price = -1.0,
             isError = true,
-            isWarning = false
+            isWarning = false,
         )
 
         return try {
@@ -104,9 +96,10 @@ class ExternalRepository @Inject constructor(
                             hashName = steamHashName,
                             price = price,
                             isError = false,
-                            isWarning = price <= 0.0
+                            isWarning = price <= 0.0,
                         )
                     }
+
                     "failed" -> return errorResponse
                 }
 

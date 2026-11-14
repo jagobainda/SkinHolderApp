@@ -6,5 +6,5 @@ data class GamerPayItemInfo(
     @SerializedName("item")
     val name: String = "",
     @SerializedName("price")
-    val price: Double = 0.0
+    val price: Double = 0.0,
 )

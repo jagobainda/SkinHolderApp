@@ -4,5 +4,5 @@ enum class ERegistroType(val value: Int) {
     Steam(1),
     GamerPay(2),
     CSFloat(3),
-    All(4)
+    All(4),
 }

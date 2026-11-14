@@ -21,10 +21,10 @@ import dev.jagoba.skinholder.core.GlobalViewModel
 import dev.jagoba.skinholder.core.SessionExpiredNotifier
 import dev.jagoba.skinholder.databinding.ActivityMainBinding
 import dev.jagoba.skinholder.dataservice.repository.AuthRepository
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -64,8 +64,11 @@ class MainActivity : AppCompatActivity() {
 
         val graph = navController.navInflater.inflate(R.navigation.mobile_navigation)
         graph.setStartDestination(
-            if (authSessionManager.isLoggedIn()) R.id.navigation_home
-            else R.id.navigation_login
+            if (authSessionManager.isLoggedIn()) {
+                R.id.navigation_home
+            } else {
+                R.id.navigation_login
+            },
         )
         navController.graph = graph
 
@@ -89,13 +92,14 @@ class MainActivity : AppCompatActivity() {
                                 .setAnchorView(binding.navView)
                                 .show()
                         }
+
                         is GlobalEvent.SessionExpired -> {
                             authSessionManager.clearAuthToken()
                             if (navController.currentDestination?.id != R.id.navigation_login) {
                                 Snackbar.make(
                                     binding.container,
                                     getString(R.string.session_expired),
-                                    Snackbar.LENGTH_LONG
+                                    Snackbar.LENGTH_LONG,
                                 ).setAnchorView(binding.navView).show()
                                 navigateToLoginFresh(navController)
                             }

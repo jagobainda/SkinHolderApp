@@ -1,12 +1,12 @@
 package dev.jagoba.skinholder.views.home
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -45,11 +45,7 @@ class HomeFragment : Fragment() {
     /** Cached last successful stats so the toggle can re-render without round-tripping the VM. */
     private var lastStats: DashboardStats? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -72,7 +68,7 @@ class HomeFragment : Fragment() {
                                 ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.primary)),
                                 start,
                                 start + username.length,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
                             )
                             binding.textGreeting.text = spannable
                         } else {
@@ -94,6 +90,7 @@ class HomeFragment : Fragment() {
                 binding.groupContent.visibility = View.GONE
                 binding.groupError.visibility = View.GONE
             }
+
             is DashboardUiState.Success -> {
                 binding.groupSkeleton.visibility = View.GONE
                 binding.groupContent.visibility = View.VISIBLE
@@ -103,6 +100,7 @@ class HomeFragment : Fragment() {
                 bindLatency(binding.includeLatency, state.stats.latency)
                 bindVariance(binding.includeVariance, state.stats.variance, selectedPlatform)
             }
+
             is DashboardUiState.Error -> {
                 binding.groupSkeleton.visibility = View.GONE
                 binding.groupContent.visibility = View.GONE
@@ -175,26 +173,24 @@ class HomeFragment : Fragment() {
         card.btnPlatformCsfloat.isSelected = selectedPlatform == Platform.CSFLOAT
     }
 
-    private fun bindVariance(
-        b: CardVarianceStatsBinding,
-        stats: VarianceStats,
-        platform: Platform
-    ) {
+    private fun bindVariance(b: CardVarianceStatsBinding, stats: VarianceStats, platform: Platform) {
         val (week, month, year) = when (platform) {
             Platform.STEAM -> Triple(
                 stats.weeklyVariancePercentSteam,
                 stats.monthlyVariancePercentSteam,
-                stats.yearlyVariancePercentSteam
+                stats.yearlyVariancePercentSteam,
             )
+
             Platform.GAMERPAY -> Triple(
                 stats.weeklyVariancePercentGamerPay,
                 stats.monthlyVariancePercentGamerPay,
-                stats.yearlyVariancePercentGamerPay
+                stats.yearlyVariancePercentGamerPay,
             )
+
             Platform.CSFLOAT -> Triple(
                 stats.weeklyVariancePercentCSFloat,
                 stats.monthlyVariancePercentCSFloat,
-                stats.yearlyVariancePercentCSFloat
+                stats.yearlyVariancePercentCSFloat,
             )
         }
         applyVariance(b.iconVarianceWeek, b.textVarianceWeek, week)
@@ -202,11 +198,7 @@ class HomeFragment : Fragment() {
         applyVariance(b.iconVarianceYear, b.textVarianceYear, year)
     }
 
-    private fun applyVariance(
-        iconView: android.widget.ImageView,
-        textView: android.widget.TextView,
-        value: Double
-    ) {
+    private fun applyVariance(iconView: android.widget.ImageView, textView: android.widget.TextView, value: Double) {
         val ctx = requireContext()
         if (value == VarianceStats.NA_VALUE) {
             iconView.setImageResource(R.drawable.ic_trending_up)
@@ -219,10 +211,10 @@ class HomeFragment : Fragment() {
         val isPositive = value >= 0.0
         val color = ContextCompat.getColor(
             ctx,
-            if (isPositive) R.color.status_success else R.color.status_error
+            if (isPositive) R.color.status_success else R.color.status_error,
         )
         iconView.setImageResource(
-            if (isPositive) R.drawable.ic_trending_up else R.drawable.ic_trending_down
+            if (isPositive) R.drawable.ic_trending_up else R.drawable.ic_trending_down,
         )
         iconView.imageTintList = android.content.res.ColorStateList.valueOf(color)
         textView.text = if (isPositive) {

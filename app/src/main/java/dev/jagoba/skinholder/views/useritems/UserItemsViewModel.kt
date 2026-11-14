@@ -6,19 +6,19 @@ import dev.jagoba.skinholder.core.BaseViewModel
 import dev.jagoba.skinholder.core.SessionExpiredException
 import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
 import dev.jagoba.skinholder.models.items.UserItem
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class UserItemUiModel(
     val userItem: UserItem,
     val editedCantidad: Int = userItem.cantidad,
     val isSaving: Boolean = false,
-    val saveResult: SaveResult? = null
+    val saveResult: SaveResult? = null,
 )
 
 enum class SaveResult { SUCCESS, ERROR }
@@ -31,9 +31,8 @@ sealed class UserItemsUiState {
 }
 
 @HiltViewModel
-class UserItemsViewModel @Inject constructor(
-    private val userItemRepository: UserItemRepository
-) : BaseViewModel<UserItemsUiState>(UserItemsUiState.Loading) {
+class UserItemsViewModel @Inject constructor(private val userItemRepository: UserItemRepository) :
+    BaseViewModel<UserItemsUiState>(UserItemsUiState.Loading) {
 
     val searchQuery = MutableStateFlow("")
 
@@ -49,6 +48,7 @@ class UserItemsViewModel @Inject constructor(
                 }
                 if (filtered.isEmpty()) UserItemsUiState.Empty else UserItemsUiState.Success(filtered)
             }
+
             else -> state
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UserItemsUiState.Loading)
@@ -68,17 +68,17 @@ class UserItemsViewModel @Inject constructor(
                     } else {
                         val sorted = items.sortedBy { it.itemName.orEmpty().lowercase() }
                         _uiState.value = UserItemsUiState.Success(
-                            sorted.map { UserItemUiModel(it) }
+                            sorted.map { UserItemUiModel(it) },
                         )
                     }
                 },
                 onFailure = { error ->
                     if (error !is SessionExpiredException) {
                         _uiState.value = UserItemsUiState.Error(
-                            error.message ?: "Error inesperado"
+                            error.message ?: "Error inesperado",
                         )
                     }
-                }
+                },
             )
         }
     }
@@ -92,7 +92,9 @@ class UserItemsViewModel @Inject constructor(
             items.map {
                 if (it.userItem.userItemId == userItemId) {
                     it.copy(editedCantidad = it.editedCantidad + 1)
-                } else it
+                } else {
+                    it
+                }
             }
         }
     }
@@ -102,7 +104,9 @@ class UserItemsViewModel @Inject constructor(
             items.map {
                 if (it.userItem.userItemId == userItemId && it.editedCantidad > 0) {
                     it.copy(editedCantidad = it.editedCantidad - 1)
-                } else it
+                } else {
+                    it
+                }
             }
         }
     }
@@ -115,8 +119,11 @@ class UserItemsViewModel @Inject constructor(
 
         updateItems { items ->
             items.map {
-                if (it.userItem.userItemId == userItemId) it.copy(isSaving = true, saveResult = null)
-                else it
+                if (it.userItem.userItemId == userItemId) {
+                    it.copy(isSaving = true, saveResult = null)
+                } else {
+                    it
+                }
             }
         }
 
@@ -132,9 +139,11 @@ class UserItemsViewModel @Inject constructor(
                                 it.copy(
                                     userItem = updatedUserItem,
                                     isSaving = false,
-                                    saveResult = SaveResult.SUCCESS
+                                    saveResult = SaveResult.SUCCESS,
                                 )
-                            } else it
+                            } else {
+                                it
+                            }
                         }
                     }
                 },
@@ -143,18 +152,23 @@ class UserItemsViewModel @Inject constructor(
                         items.map {
                             if (it.userItem.userItemId == userItemId) {
                                 it.copy(isSaving = false, saveResult = SaveResult.ERROR)
-                            } else it
+                            } else {
+                                it
+                            }
                         }
                     }
-                }
+                },
             )
 
             // Clear saveResult after a delay for transient feedback
             kotlinx.coroutines.delay(1500)
             updateItems { items ->
                 items.map {
-                    if (it.userItem.userItemId == userItemId) it.copy(saveResult = null)
-                    else it
+                    if (it.userItem.userItemId == userItemId) {
+                        it.copy(saveResult = null)
+                    } else {
+                        it
+                    }
                 }
             }
         }
@@ -171,6 +185,8 @@ class UserItemsViewModel @Inject constructor(
         val state = _uiState.value
         return if (state is UserItemsUiState.Success) {
             state.items.map { it.userItem.itemId }
-        } else emptyList()
+        } else {
+            emptyList()
+        }
     }
 }

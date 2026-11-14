@@ -18,6 +18,10 @@ import dev.jagoba.skinholder.dataservice.repository.RegistroRepository
 import dev.jagoba.skinholder.dataservice.repository.UserItemRepository
 import dev.jagoba.skinholder.models.items.ItemPrecio
 import dev.jagoba.skinholder.models.registros.Registro
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -30,10 +34,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import javax.inject.Inject
 
 enum class SortField { FECHA, STEAM, GAMERPAY, CSFLOAT }
 
@@ -63,7 +63,7 @@ data class ConsultaProgreso(
     val totalCSFloat: Double = 0.0,
     val itemsNoListadosGamerPay: Int = 0,
     val itemsWarningSteam: Int = 0,
-    val itemsErrorSteam: Int = 0
+    val itemsErrorSteam: Int = 0,
 )
 
 sealed class RegistrosEvent {
@@ -80,7 +80,7 @@ class RegistrosViewModel @Inject constructor(
     private val itemPrecioRepository: ItemPrecioRepository,
     private val userItemRepository: UserItemRepository,
     private val externalRepository: ExternalRepository,
-    private val authSessionManager: AuthSessionManager
+    private val authSessionManager: AuthSessionManager,
 ) : BaseViewModel<RegistrosUiState>(RegistrosUiState.Loading) {
 
     private val _allRegistros = MutableStateFlow<List<Registro>>(emptyList())
@@ -103,7 +103,9 @@ class RegistrosViewModel @Inject constructor(
     private val dateParser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
 
     private val filteredSorted: Flow<List<Registro>> = combine(
-        _allRegistros, _dateRange, _sortOption
+        _allRegistros,
+        _dateRange,
+        _sortOption,
     ) { registros, range, sort ->
         var result = registros
 
@@ -115,17 +117,29 @@ class RegistrosViewModel @Inject constructor(
         }
 
         result = when (sort.field) {
-            SortField.FECHA -> if (sort.ascending) result.sortedBy { parseDate(it.fechaHora) ?: 0L }
-            else result.sortedByDescending { parseDate(it.fechaHora) ?: 0L }
+            SortField.FECHA -> if (sort.ascending) {
+                result.sortedBy { parseDate(it.fechaHora) ?: 0L }
+            } else {
+                result.sortedByDescending { parseDate(it.fechaHora) ?: 0L }
+            }
 
-            SortField.STEAM -> if (sort.ascending) result.sortedBy { it.totalSteam }
-            else result.sortedByDescending { it.totalSteam }
+            SortField.STEAM -> if (sort.ascending) {
+                result.sortedBy { it.totalSteam }
+            } else {
+                result.sortedByDescending { it.totalSteam }
+            }
 
-            SortField.GAMERPAY -> if (sort.ascending) result.sortedBy { it.totalGamerPay }
-            else result.sortedByDescending { it.totalGamerPay }
+            SortField.GAMERPAY -> if (sort.ascending) {
+                result.sortedBy { it.totalGamerPay }
+            } else {
+                result.sortedByDescending { it.totalGamerPay }
+            }
 
-            SortField.CSFLOAT -> if (sort.ascending) result.sortedBy { it.totalCsFloat }
-            else result.sortedByDescending { it.totalCsFloat }
+            SortField.CSFLOAT -> if (sort.ascending) {
+                result.sortedBy { it.totalCsFloat }
+            } else {
+                result.sortedByDescending { it.totalCsFloat }
+            }
         }
 
         result
@@ -147,16 +161,19 @@ class RegistrosViewModel @Inject constructor(
             registroRepository.getRegistros().fold(
                 onSuccess = { registros ->
                     _allRegistros.value = registros
-                    _uiState.value = if (registros.isEmpty()) RegistrosUiState.Empty
-                    else RegistrosUiState.Loaded
+                    _uiState.value = if (registros.isEmpty()) {
+                        RegistrosUiState.Empty
+                    } else {
+                        RegistrosUiState.Loaded
+                    }
                 },
                 onFailure = { error ->
                     if (error !is SessionExpiredException) {
                         _uiState.value = RegistrosUiState.Error(
-                            error.message ?: "Error inesperado"
+                            error.message ?: "Error inesperado",
                         )
                     }
-                }
+                },
             )
         }
     }
@@ -198,14 +215,14 @@ class RegistrosViewModel @Inject constructor(
                             if (e !is SessionExpiredException) {
                                 _events.emit(RegistrosEvent.DeleteError(e.message ?: "Error al eliminar"))
                             }
-                        }
+                        },
                     )
                 },
                 onFailure = { e ->
                     if (e !is SessionExpiredException) {
                         _events.emit(RegistrosEvent.DeleteError(e.message ?: "Error al eliminar"))
                     }
-                }
+                },
             )
         }
     }
@@ -273,7 +290,7 @@ class RegistrosViewModel @Inject constructor(
 
                     Log.d(
                         "RegistrosVM",
-                        "item=$gamerPayLookup gp=${gamerPayItem?.price ?: "null"} steam=${steamInfo.price} cs=$csFloatPrice cant=${userItem.cantidad}"
+                        "item=$gamerPayLookup gp=${gamerPayItem?.price ?: "null"} steam=${steamInfo.price} cs=$csFloatPrice cant=${userItem.cantidad}",
                     )
 
                     if (steamInfo.isWarning) warningSteam++
@@ -289,8 +306,8 @@ class RegistrosViewModel @Inject constructor(
                             precioSteam = maxOf(steamInfo.price, 0.0),
                             precioGamerPay = gamerPayItem?.price ?: 0.0,
                             precioCsFloat = maxOf(csFloatPrice, 0.0),
-                            userItemId = userItem.userItemId
-                        )
+                            userItemId = userItem.userItemId,
+                        ),
                     )
 
                     val progreso = index + 1
@@ -304,7 +321,7 @@ class RegistrosViewModel @Inject constructor(
                             totalCSFloat = totalCSFloat,
                             itemsWarningSteam = warningSteam,
                             itemsErrorSteam = errorSteam,
-                            itemsNoListadosGamerPay = noListadosGamerPay
+                            itemsNoListadosGamerPay = noListadosGamerPay,
                         )
                     }
                     _consultaState.value = ConsultaState.Loading(progreso = progreso, total = total)
@@ -317,7 +334,7 @@ class RegistrosViewModel @Inject constructor(
                     totalSteam = totalSteam,
                     totalGamerPay = totalGamerPay,
                     totalCsFloat = totalCSFloat,
-                    userId = authSessionManager.getUserId()
+                    userId = authSessionManager.getUserId(),
                 )
 
                 val registroId = registroRepository.createRegistro(registro).getOrElse { error ->
@@ -360,24 +377,18 @@ class RegistrosViewModel @Inject constructor(
         _consultaProgreso.value = ConsultaProgreso()
     }
 
-    private fun parseDate(dateStr: String): Long? {
-        return try {
-            dateParser.parse(dateStr)?.time
-        } catch (_: Exception) {
-            null
-        }
+    private fun parseDate(dateStr: String): Long? = try {
+        dateParser.parse(dateStr)?.time
+    } catch (_: Exception) {
+        null
     }
 }
 
-class ListPagingSource<T : Any>(
-    private val items: List<T>
-) : PagingSource<Int, T>() {
+class ListPagingSource<T : Any>(private val items: List<T>) : PagingSource<Int, T>() {
 
-    override fun getRefreshKey(state: PagingState<Int, T>): Int? {
-        return state.anchorPosition?.let { anchor ->
-            state.closestPageToPosition(anchor)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchor)?.nextKey?.minus(1)
-        }
+    override fun getRefreshKey(state: PagingState<Int, T>): Int? = state.anchorPosition?.let { anchor ->
+        state.closestPageToPosition(anchor)?.prevKey?.plus(1)
+            ?: state.closestPageToPosition(anchor)?.nextKey?.minus(1)
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
@@ -392,7 +403,7 @@ class ListPagingSource<T : Any>(
             LoadResult.Page(
                 data = items.subList(fromIndex, toIndex),
                 prevKey = if (page == 0) null else page - 1,
-                nextKey = if (toIndex >= items.size) null else page + 1
+                nextKey = if (toIndex >= items.size) null else page + 1,
             )
         }
     }

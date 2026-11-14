@@ -10,5 +10,5 @@ data class Item(
     @SerializedName(value = "hashNameSteam", alternate = ["HashNameSteam", "hashNamesteam"])
     val hashNameSteam: String? = null,
     @SerializedName(value = "gamerPayNombre", alternate = ["GamerPayNombre"])
-    val gamerPayNombre: String? = null
+    val gamerPayNombre: String? = null,
 )

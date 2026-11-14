@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class LoggerService @Inject constructor(
     private val logRepository: LogRepository,
-    private val authSessionManager: AuthSessionManager
+    private val authSessionManager: AuthSessionManager,
 ) {
 
     companion object {
@@ -31,7 +31,7 @@ class LoggerService @Inject constructor(
                 logDescription = message,
                 logTypeId = logType.value,
                 logPlaceId = ELogPlace.Mobile.value,
-                userId = authSessionManager.getUserId()
+                userId = authSessionManager.getUserId(),
             )
             logRepository.addLog(logger)
         } catch (_: Exception) {

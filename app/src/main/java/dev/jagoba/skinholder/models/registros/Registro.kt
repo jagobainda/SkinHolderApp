@@ -14,5 +14,5 @@ data class Registro(
     @SerializedName("totalcsfloat")
     val totalCsFloat: Double = 0.0,
     @SerializedName("userid")
-    val userId: Int = 0
+    val userId: Int = 0,
 )

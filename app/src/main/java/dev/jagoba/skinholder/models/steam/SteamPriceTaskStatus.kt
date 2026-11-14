@@ -16,5 +16,5 @@ data class SteamPriceTaskStatus(
     @SerializedName("createdAt")
     val createdAt: String? = null,
     @SerializedName("completedAt")
-    val completedAt: String? = null
+    val completedAt: String? = null,
 )

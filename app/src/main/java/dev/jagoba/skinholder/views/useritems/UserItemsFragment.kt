@@ -20,16 +20,16 @@ import dev.jagoba.skinholder.views.useritems.add.AddUserItemBottomSheet
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class UserItemsFragment : Fragment(), UserItemActions {
+class UserItemsFragment :
+    Fragment(),
+    UserItemActions {
 
     private var _binding: FragmentUserItemsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: UserItemsViewModel by viewModels()
     private lateinit var adapter: UserItemAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentUserItemsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -77,12 +77,12 @@ class UserItemsFragment : Fragment(), UserItemActions {
     private fun setupAddItemResultListener() {
         parentFragmentManager.setFragmentResultListener(
             AddUserItemBottomSheet.RESULT_KEY,
-            viewLifecycleOwner
+            viewLifecycleOwner,
         ) { _, _ ->
             Snackbar.make(
                 binding.root,
                 getString(R.string.add_item_success),
-                Snackbar.LENGTH_SHORT
+                Snackbar.LENGTH_SHORT,
             ).setAnchorView(binding.fabAddItem).show()
             viewModel.refresh()
         }
@@ -120,7 +120,7 @@ class UserItemsFragment : Fragment(), UserItemActions {
                             Snackbar.make(
                                 binding.root,
                                 state.message,
-                                Snackbar.LENGTH_LONG
+                                Snackbar.LENGTH_LONG,
                             ).setAnchorView(binding.fabAddItem).show()
                         }
                     }

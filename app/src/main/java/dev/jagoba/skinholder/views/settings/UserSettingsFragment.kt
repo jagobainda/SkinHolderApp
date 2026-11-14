@@ -27,9 +27,7 @@ class UserSettingsFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: UserSettingsViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentUserSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -47,7 +45,7 @@ class UserSettingsFragment : Fragment() {
             viewModel.changePassword(
                 currentPassword = binding.editCurrentPassword.text.toString(),
                 newPassword = binding.editNewPassword.text.toString(),
-                confirmPassword = binding.editConfirmPassword.text.toString()
+                confirmPassword = binding.editConfirmPassword.text.toString(),
             )
         }
 
@@ -61,7 +59,7 @@ class UserSettingsFragment : Fragment() {
                 title = getString(R.string.settings_delete_confirm_title),
                 message = getString(R.string.settings_delete_confirm_message),
                 confirmText = getString(R.string.settings_delete_btn),
-                requestKey = REQUEST_DELETE_ACCOUNT
+                requestKey = REQUEST_DELETE_ACCOUNT,
             ).show(childFragmentManager, "delete_dialog")
         }
 
@@ -69,7 +67,7 @@ class UserSettingsFragment : Fragment() {
             ConfirmationDialogFragment.newInstance(
                 title = getString(R.string.settings_logout_confirm_title),
                 message = getString(R.string.settings_logout_confirm_message),
-                requestKey = REQUEST_LOGOUT
+                requestKey = REQUEST_LOGOUT,
             ).show(childFragmentManager, "logout_dialog")
         }
     }
@@ -98,12 +96,14 @@ class UserSettingsFragment : Fragment() {
                                 binding.progressLoading.isVisible = true
                                 binding.layoutContent.isVisible = false
                             }
+
                             is UserSettingsUiState.Loaded -> {
                                 binding.progressLoading.isVisible = false
                                 binding.layoutContent.isVisible = true
                                 binding.textUsername.text = state.username
                                 binding.textCreatedAt.text = state.createdAt
                             }
+
                             is UserSettingsUiState.Error -> {
                                 binding.progressLoading.isVisible = false
                                 binding.layoutContent.isVisible = true
@@ -135,15 +135,19 @@ class UserSettingsFragment : Fragment() {
                             clearPasswordFields()
                             showPasswordStatus(event.message, isError = false)
                         }
+
                         is UserSettingsEvent.PasswordError -> {
                             showPasswordStatus(event.message, isError = true)
                         }
+
                         is UserSettingsEvent.AccountDeleted -> {
                             navigateToLogin()
                         }
+
                         is UserSettingsEvent.DeleteError -> {
                             showDeleteStatus(event.message, isError = true)
                         }
+
                         is UserSettingsEvent.LoggedOut -> {
                             navigateToLogin()
                         }
@@ -157,8 +161,11 @@ class UserSettingsFragment : Fragment() {
         binding.textPasswordStatus.apply {
             text = message
             setTextColor(
-                if (isError) ContextCompat.getColor(requireContext(), R.color.status_error)
-                else ContextCompat.getColor(requireContext(), R.color.status_success)
+                if (isError) {
+                    ContextCompat.getColor(requireContext(), R.color.status_error)
+                } else {
+                    ContextCompat.getColor(requireContext(), R.color.status_success)
+                },
             )
             isVisible = true
         }
@@ -168,8 +175,11 @@ class UserSettingsFragment : Fragment() {
         binding.textDeleteStatus.apply {
             text = message
             setTextColor(
-                if (isError) ContextCompat.getColor(requireContext(), R.color.status_error)
-                else ContextCompat.getColor(requireContext(), R.color.status_success)
+                if (isError) {
+                    ContextCompat.getColor(requireContext(), R.color.status_error)
+                } else {
+                    ContextCompat.getColor(requireContext(), R.color.status_success)
+                },
             )
             isVisible = true
         }

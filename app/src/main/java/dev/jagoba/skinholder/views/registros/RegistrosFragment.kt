@@ -21,14 +21,16 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.jagoba.skinholder.R
 import dev.jagoba.skinholder.databinding.FragmentRegistrosBinding
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class RegistrosFragment : Fragment(), RegistroActions {
+class RegistrosFragment :
+    Fragment(),
+    RegistroActions {
 
     private var _binding: FragmentRegistrosBinding? = null
     private val binding get() = _binding!!
@@ -39,9 +41,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
     private val chipDateFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private var pendingScrollToTop = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentRegistrosBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -74,8 +74,8 @@ class RegistrosFragment : Fragment(), RegistroActions {
 
             binding.skeletonLoading.isVisible = showSkeleton
             binding.recyclerRegistros.isVisible = !showSkeleton && !isListEmpty
-            binding.layoutEmpty.isVisible = isListEmpty && !showSkeleton
-                    && vmState !is RegistrosUiState.Error
+            binding.layoutEmpty.isVisible = isListEmpty && !showSkeleton &&
+                vmState !is RegistrosUiState.Error
 
             if (loadState.refresh is LoadState.NotLoading && pendingScrollToTop) {
                 pendingScrollToTop = false
@@ -119,13 +119,13 @@ class RegistrosFragment : Fragment(), RegistroActions {
             getString(R.string.registros_sort_fecha),
             getString(R.string.registros_sort_steam),
             getString(R.string.registros_sort_gamerpay),
-            getString(R.string.registros_sort_csfloat)
+            getString(R.string.registros_sort_csfloat),
         )
 
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
             R.layout.spinner_item,
-            sortLabels
+            sortLabels,
         ).apply {
             setDropDownViewResource(R.layout.spinner_dropdown_item)
         }
@@ -135,7 +135,10 @@ class RegistrosFragment : Fragment(), RegistroActions {
         binding.spinnerSort.onItemSelectedListener =
             object : android.widget.AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
-                    parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long
+                    parent: android.widget.AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long,
                 ) {
                     pendingScrollToTop = true
                     viewModel.setSortOption(sortFields[position])
@@ -177,16 +180,19 @@ class RegistrosFragment : Fragment(), RegistroActions {
                                 binding.recyclerRegistros.isVisible = false
                                 binding.layoutEmpty.isVisible = false
                             }
+
                             is RegistrosUiState.Loaded -> {
                                 binding.skeletonLoading.isVisible = false
                                 binding.recyclerRegistros.isVisible = true
                                 binding.layoutEmpty.isVisible = false
                             }
+
                             is RegistrosUiState.Empty -> {
                                 binding.skeletonLoading.isVisible = false
                                 binding.recyclerRegistros.isVisible = false
                                 binding.layoutEmpty.isVisible = true
                             }
+
                             is RegistrosUiState.Error -> {
                                 binding.skeletonLoading.isVisible = false
                                 binding.recyclerRegistros.isVisible = false
@@ -221,7 +227,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
                                 binding.textConsultaProgress.text = getString(
                                     R.string.registros_consultando_progreso,
                                     state.progreso,
-                                    state.total
+                                    state.total,
                                 )
                             } else {
                                 binding.progressConsulta.isIndeterminate = true
@@ -229,9 +235,11 @@ class RegistrosFragment : Fragment(), RegistroActions {
                                     getString(R.string.registros_consultando_inicio)
                             }
                         }
+
                         is ConsultaState.Idle,
                         is ConsultaState.Success,
-                        is ConsultaState.Error -> {
+                        is ConsultaState.Error,
+                        -> {
                             binding.fabConsultar.isEnabled = true
                             binding.layoutConsultaProgress.isVisible = false
                         }
@@ -248,13 +256,16 @@ class RegistrosFragment : Fragment(), RegistroActions {
                     when (event) {
                         is RegistrosEvent.Deleted ->
                             showAnchoredSnackbar(event.message, Snackbar.LENGTH_SHORT)
+
                         is RegistrosEvent.DeleteError ->
                             showAnchoredSnackbar(event.message, Snackbar.LENGTH_LONG)
+
                         is RegistrosEvent.ConsultaSuccess ->
                             showColoredSnackbar(
                                 getString(R.string.registros_consulta_success),
-                                R.color.status_success
+                                R.color.status_success,
                             )
+
                         is RegistrosEvent.ConsultaError ->
                             showColoredSnackbar(event.message, R.color.status_error)
                     }
@@ -281,7 +292,7 @@ class RegistrosFragment : Fragment(), RegistroActions {
     override fun onViewDetail(registroId: Long) {
         findNavController().navigate(
             R.id.action_registros_to_detail,
-            Bundle().apply { putLong("registroId", registroId) }
+            Bundle().apply { putLong("registroId", registroId) },
         )
     }
 

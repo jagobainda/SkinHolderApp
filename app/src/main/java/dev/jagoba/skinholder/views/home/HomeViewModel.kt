@@ -6,12 +6,12 @@ import dev.jagoba.skinholder.core.BaseViewModel
 import dev.jagoba.skinholder.core.SessionExpiredException
 import dev.jagoba.skinholder.dataservice.repository.DashboardRepository
 import dev.jagoba.skinholder.models.dashboard.DashboardStats
+import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed class DashboardUiState {
     data object Loading : DashboardUiState()
@@ -20,9 +20,8 @@ sealed class DashboardUiState {
 }
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val dashboardRepository: DashboardRepository
-) : BaseViewModel<DashboardUiState>(DashboardUiState.Loading) {
+class HomeViewModel @Inject constructor(private val dashboardRepository: DashboardRepository) :
+    BaseViewModel<DashboardUiState>(DashboardUiState.Loading) {
 
     private var refreshJob: Job? = null
 
@@ -47,7 +46,7 @@ class HomeViewModel @Inject constructor(
                 throw e
             } catch (e: Exception) {
                 _uiState.value = DashboardUiState.Error(
-                    e.message ?: "Error cargando el dashboard"
+                    e.message ?: "Error cargando el dashboard",
                 )
             }
         }
@@ -72,7 +71,7 @@ class HomeViewModel @Inject constructor(
                     throw e
                 } catch (e: Exception) {
                     _uiState.value = DashboardUiState.Error(
-                        e.message ?: "Error cargando el dashboard"
+                        e.message ?: "Error cargando el dashboard",
                     )
                 }
                 delay(REFRESH_INTERVAL_MS)

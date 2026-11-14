@@ -11,9 +11,8 @@ import dev.jagoba.skinholder.R
 import dev.jagoba.skinholder.databinding.ItemAvailableItemBinding
 import dev.jagoba.skinholder.models.items.Item
 
-class AvailableItemAdapter(
-    private val onSelect: (Item) -> Unit
-) : ListAdapter<Item, AvailableItemAdapter.ViewHolder>(DiffCallback) {
+class AvailableItemAdapter(private val onSelect: (Item) -> Unit) :
+    ListAdapter<Item, AvailableItemAdapter.ViewHolder>(DiffCallback) {
 
     // Selection state lives only in the adapter, not in the list model.
     var selectedItemId: Int? = null
@@ -48,7 +47,9 @@ class AvailableItemAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemAvailableItemBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
+            LayoutInflater.from(parent.context),
+            parent,
+            false,
         )
         return ViewHolder(binding)
     }
@@ -57,9 +58,7 @@ class AvailableItemAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(
-        private val binding: ItemAvailableItemBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemAvailableItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Item) {
             binding.textItemNombre.text = item.nombre
@@ -67,15 +66,15 @@ class AvailableItemAdapter(
             val isSelected = item.itemId != 0 && item.itemId == selectedItemId
             if (isSelected) {
                 binding.rowRoot.setBackgroundColor(
-                    ContextCompat.getColor(ctx, R.color.surface_container_highest)
+                    ContextCompat.getColor(ctx, R.color.surface_container_highest),
                 )
                 binding.textItemNombre.setTextColor(
-                    ContextCompat.getColor(ctx, R.color.primary)
+                    ContextCompat.getColor(ctx, R.color.primary),
                 )
             } else {
                 binding.rowRoot.setBackgroundColor(Color.TRANSPARENT)
                 binding.textItemNombre.setTextColor(
-                    ContextCompat.getColor(ctx, R.color.on_surface)
+                    ContextCompat.getColor(ctx, R.color.on_surface),
                 )
             }
             binding.rowRoot.setOnClickListener { onSelect(item) }

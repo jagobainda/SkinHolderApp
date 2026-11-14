@@ -8,14 +8,14 @@ import dev.jagoba.skinholder.core.SessionExpiredException
 import dev.jagoba.skinholder.dataservice.repository.UserSettingsRepository
 import dev.jagoba.skinholder.logic.LoggerService
 import dev.jagoba.skinholder.models.enums.ELogType
+import java.text.SimpleDateFormat
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
-import javax.inject.Inject
 
 sealed class UserSettingsUiState {
     data object Loading : UserSettingsUiState()
@@ -35,7 +35,7 @@ sealed class UserSettingsEvent {
 class UserSettingsViewModel @Inject constructor(
     private val userSettingsRepository: UserSettingsRepository,
     private val authSessionManager: AuthSessionManager,
-    private val loggerService: LoggerService
+    private val loggerService: LoggerService,
 ) : BaseViewModel<UserSettingsUiState>(UserSettingsUiState.Loading) {
 
     private val _isLoading = MutableStateFlow(false)
@@ -66,15 +66,15 @@ class UserSettingsViewModel @Inject constructor(
                         username = info.username.ifBlank {
                             authSessionManager.getUsername() ?: "No disponible"
                         },
-                        createdAt = formattedDate
+                        createdAt = formattedDate,
                     )
                 },
                 onFailure = {
                     _uiState.value = UserSettingsUiState.Loaded(
                         username = authSessionManager.getUsername() ?: "No disponible",
-                        createdAt = "No disponible"
+                        createdAt = "No disponible",
                     )
-                }
+                },
             )
         }
     }
@@ -111,7 +111,7 @@ class UserSettingsViewModel @Inject constructor(
                     if (e !is SessionExpiredException) {
                         _events.emit(UserSettingsEvent.PasswordError(e.message ?: "Error al cambiar la contraseña."))
                     }
-                }
+                },
             )
             _isLoading.value = false
         }
@@ -135,7 +135,7 @@ class UserSettingsViewModel @Inject constructor(
                     if (e !is SessionExpiredException) {
                         _events.emit(UserSettingsEvent.DeleteError(e.message ?: "Error al eliminar la cuenta."))
                     }
-                }
+                },
             )
             _isLoading.value = false
         }

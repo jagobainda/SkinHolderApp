@@ -8,7 +8,6 @@ interface UserRepository {
 }
 
 class UserRepositoryImpl @Inject constructor() : UserRepository {
-    override suspend fun getLoginPlaceholder(): LoginResponse? {
-        return LoginResponse("asdhnfjksladhbfgjklahsdjkflhasjkdljklasdhfjkldashjkglbhdfjaklgdfbhjklagdsl", "jagoba", 1)
-    }
+    override suspend fun getLoginPlaceholder(): LoginResponse? =
+        LoginResponse("asdhnfjksladhbfgjklahsdjkflhasjkdljklasdhfjkldashjkglbhdfjaklgdfbhjklagdsl", "jagoba", 1)
 }

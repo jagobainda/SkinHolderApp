@@ -17,13 +17,14 @@ interface UserItemActions {
     fun onSave(userItemId: Long)
 }
 
-class UserItemAdapter(
-    private val actions: UserItemActions
-) : ListAdapter<UserItemUiModel, UserItemAdapter.ViewHolder>(UserItemDiffCallback()) {
+class UserItemAdapter(private val actions: UserItemActions) :
+    ListAdapter<UserItemUiModel, UserItemAdapter.ViewHolder>(UserItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemUserItemBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
+            LayoutInflater.from(parent.context),
+            parent,
+            false,
         )
         return ViewHolder(binding)
     }
@@ -32,9 +33,7 @@ class UserItemAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(
-        private val binding: ItemUserItemBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemUserItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: UserItemUiModel) {
             binding.textItemName.text = model.userItem.itemName
@@ -58,7 +57,9 @@ class UserItemAdapter(
             // Transient color flash on save result (matches Desktop NombreForeground behavior)
             when (model.saveResult) {
                 SaveResult.SUCCESS -> flashNameColor(ContextCompat.getColor(itemView.context, R.color.status_success))
+
                 SaveResult.ERROR -> flashNameColor(ContextCompat.getColor(itemView.context, R.color.status_error))
+
                 null -> {
                     // Reset to default text color
                     val defaultColor = binding.textItemName.textColors.defaultColor
@@ -82,12 +83,10 @@ class UserItemAdapter(
     }
 
     class UserItemDiffCallback : DiffUtil.ItemCallback<UserItemUiModel>() {
-        override fun areItemsTheSame(oldItem: UserItemUiModel, newItem: UserItemUiModel): Boolean {
-            return oldItem.userItem.userItemId == newItem.userItem.userItemId
-        }
+        override fun areItemsTheSame(oldItem: UserItemUiModel, newItem: UserItemUiModel): Boolean =
+            oldItem.userItem.userItemId == newItem.userItem.userItemId
 
-        override fun areContentsTheSame(oldItem: UserItemUiModel, newItem: UserItemUiModel): Boolean {
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: UserItemUiModel, newItem: UserItemUiModel): Boolean =
+            oldItem == newItem
     }
 }

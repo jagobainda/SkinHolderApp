@@ -16,9 +16,9 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.jagoba.skinholder.R
 import dev.jagoba.skinholder.databinding.FragmentRegistroDetailBinding
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RegistroDetailFragment : Fragment() {
@@ -33,9 +33,7 @@ class RegistroDetailFragment : Fragment() {
     private val displayFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
     private var pendingScrollToTop = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentRegistroDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -61,13 +59,13 @@ class RegistroDetailFragment : Fragment() {
             getString(R.string.registro_detail_sort_cantidad),
             getString(R.string.registro_detail_sort_steam),
             getString(R.string.registro_detail_sort_gamerpay),
-            getString(R.string.registro_detail_sort_csfloat)
+            getString(R.string.registro_detail_sort_csfloat),
         )
 
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
             R.layout.spinner_item,
-            sortLabels
+            sortLabels,
         ).apply {
             setDropDownViewResource(R.layout.spinner_dropdown_item)
         }
@@ -77,7 +75,10 @@ class RegistroDetailFragment : Fragment() {
         binding.spinnerDetailSort.onItemSelectedListener =
             object : android.widget.AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
-                    parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long
+                    parent: android.widget.AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long,
                 ) {
                     pendingScrollToTop = true
                     viewModel.setSortOption(sortFields[position])
@@ -149,18 +150,14 @@ class RegistroDetailFragment : Fragment() {
         }
     }
 
-    private fun formatDate(dateStr: String): String {
-        return try {
-            val date = inputFormat.parse(dateStr)
-            date?.let { displayFormat.format(it) } ?: dateStr
-        } catch (_: Exception) {
-            dateStr
-        }
+    private fun formatDate(dateStr: String): String = try {
+        val date = inputFormat.parse(dateStr)
+        date?.let { displayFormat.format(it) } ?: dateStr
+    } catch (_: Exception) {
+        dateStr
     }
 
-    private fun formatPrice(price: Double): String {
-        return String.format(Locale.getDefault(), "%.2f €", price)
-    }
+    private fun formatPrice(price: Double): String = String.format(Locale.getDefault(), "%.2f €", price)
 
     override fun onDestroyView() {
         super.onDestroyView()

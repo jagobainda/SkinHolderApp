@@ -2,19 +2,20 @@ package dev.jagoba.skinholder.dataservice.api
 
 import android.util.Log
 import dev.jagoba.skinholder.models.steam.GamerPayItemInfo
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 class GamerPayApi @Inject constructor() {
 
     private companion object {
         const val TAG = "GamerPayApi"
         const val ENDPOINT = "https://api.gamerpay.gg/prices"
+
         // Real Chrome/Android UA so Cloudflare does not cut the stream short
         const val USER_AGENT =
             "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
@@ -67,22 +68,20 @@ class GamerPayApi @Inject constructor() {
         }
     }
 
-    private fun parsePrices(body: String): List<GamerPayItemInfo> {
-        return try {
-            val array = JSONArray(body)
-            val result = ArrayList<GamerPayItemInfo>(array.length())
-            for (i in 0 until array.length()) {
-                val element = array.optJSONObject(i) ?: continue
-                val name = element.optString("item", "")
-                val price = element.optDouble("price", 0.0)
-                if (name.isNotBlank()) {
-                    result.add(GamerPayItemInfo(name = name, price = price))
-                }
+    private fun parsePrices(body: String): List<GamerPayItemInfo> = try {
+        val array = JSONArray(body)
+        val result = ArrayList<GamerPayItemInfo>(array.length())
+        for (i in 0 until array.length()) {
+            val element = array.optJSONObject(i) ?: continue
+            val name = element.optString("item", "")
+            val price = element.optDouble("price", 0.0)
+            if (name.isNotBlank()) {
+                result.add(GamerPayItemInfo(name = name, price = price))
             }
-            result
-        } catch (e: Exception) {
-            Log.e(TAG, "Error parsing GamerPay JSON (first 200 chars: ${body.take(200)})", e)
-            emptyList()
         }
+        result
+    } catch (e: Exception) {
+        Log.e(TAG, "Error parsing GamerPay JSON (first 200 chars: ${body.take(200)})", e)
+        emptyList()
     }
 }

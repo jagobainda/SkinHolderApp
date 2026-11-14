@@ -6,11 +6,11 @@ import dev.jagoba.skinholder.core.AuthSessionManager
 import dev.jagoba.skinholder.core.BaseViewModel
 import dev.jagoba.skinholder.core.SessionExpiredNotifier
 import dev.jagoba.skinholder.dataservice.repository.AuthRepository
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed class LoginUiState {
     data object Idle : LoginUiState()
@@ -20,17 +20,13 @@ sealed class LoginUiState {
 }
 
 /** One-shot data given to the fragment on first render to pre-fill the form. */
-data class SavedCredentials(
-    val username: String,
-    val password: String,
-    val rememberMe: Boolean
-)
+data class SavedCredentials(val username: String, val password: String, val rememberMe: Boolean)
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val authSessionManager: AuthSessionManager,
-    private val sessionExpiredNotifier: SessionExpiredNotifier
+    private val sessionExpiredNotifier: SessionExpiredNotifier,
 ) : BaseViewModel<LoginUiState>(LoginUiState.Idle) {
 
     private val _savePassword = MutableStateFlow(false)
@@ -55,8 +51,10 @@ class LoginViewModel @Inject constructor(
         return when {
             !username.isNullOrBlank() && !password.isNullOrBlank() ->
                 SavedCredentials(username, password, rememberMe = true)
+
             !username.isNullOrBlank() ->
                 SavedCredentials(username, password = "", rememberMe = false)
+
             else -> null
         }
     }
@@ -82,13 +80,13 @@ class LoginViewModel @Inject constructor(
                             response.token,
                             response.userName,
                             response.userId,
-                            password.trim()
+                            password.trim(),
                         )
                     } else {
                         authSessionManager.saveSession(
                             response.token,
                             response.userName,
-                            response.userId
+                            response.userId,
                         )
                         authSessionManager.clearSavedPassword()
                     }
@@ -98,9 +96,9 @@ class LoginViewModel @Inject constructor(
                 },
                 onFailure = { error ->
                     _uiState.value = LoginUiState.Error(
-                        error.message ?: "Error inesperado durante el login"
+                        error.message ?: "Error inesperado durante el login",
                     )
-                }
+                },
             )
         }
     }

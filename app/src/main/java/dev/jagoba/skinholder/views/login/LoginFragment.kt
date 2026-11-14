@@ -15,11 +15,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import dev.jagoba.skinholder.core.GlobalViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.jagoba.skinholder.R
+import dev.jagoba.skinholder.core.GlobalViewModel
 import dev.jagoba.skinholder.databinding.FragmentLoginBinding
 import kotlinx.coroutines.launch
 
@@ -31,9 +31,7 @@ class LoginFragment : Fragment() {
     private val viewModel: LoginViewModel by viewModels()
     private val globalViewModel: GlobalViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -67,7 +65,9 @@ class LoginFragment : Fragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performLogin()
                 true
-            } else false
+            } else {
+                false
+            }
         }
 
         binding.checkRememberMe.setOnCheckedChangeListener { _, isChecked ->

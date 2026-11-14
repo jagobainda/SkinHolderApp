@@ -2,10 +2,10 @@ package dev.jagoba.skinholder.core
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.coroutines.coroutineContext
 
 abstract class BaseViewModel<T>(initialState: T) : ViewModel() {
     protected val _uiState = MutableStateFlow(initialState)

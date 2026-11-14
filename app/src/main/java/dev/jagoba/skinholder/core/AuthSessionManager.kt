@@ -6,14 +6,12 @@ import android.util.Base64
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.json.JSONObject
 
 @Singleton
-class AuthSessionManager @Inject constructor(
-    @ApplicationContext context: Context
-) {
+class AuthSessionManager @Inject constructor(@ApplicationContext context: Context) {
 
     private val prefs: SharedPreferences
 
@@ -27,7 +25,7 @@ class AuthSessionManager @Inject constructor(
             "auth_prefs",
             masterKey,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
         )
     }
 

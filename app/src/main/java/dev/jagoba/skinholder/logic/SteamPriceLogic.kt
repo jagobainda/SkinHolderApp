@@ -19,10 +19,8 @@ class SteamPriceLogic @Inject constructor(private val steamPriceApi: SteamPriceA
         country: String,
         currency: Int,
         appId: Int,
-        marketHashNames: List<String>
-    ): List<SteamPriceResponse> {
-        return marketHashNames.map { hashName ->
-            steamPriceApi.fetchPrice(country, currency, appId, hashName)
-        }
+        marketHashNames: List<String>,
+    ): List<SteamPriceResponse> = marketHashNames.map { hashName ->
+        steamPriceApi.fetchPrice(country, currency, appId, hashName)
     }
 }

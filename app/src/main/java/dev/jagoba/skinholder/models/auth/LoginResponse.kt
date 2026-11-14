@@ -6,5 +6,5 @@ data class LoginResponse(
     val token: String,
     @SerializedName("username")
     val userName: String,
-    val userId: Int
+    val userId: Int,
 )

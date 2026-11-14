@@ -26,9 +26,7 @@ class AddUserItemBottomSheet : BottomSheetDialogFragment() {
     private val viewModel: AddUserItemViewModel by viewModels()
     private lateinit var adapter: AvailableItemAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = BottomSheetAddUserItemBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -108,16 +106,18 @@ class AddUserItemBottomSheet : BottomSheetDialogFragment() {
                             Toast.makeText(
                                 ctx,
                                 getString(event.messageRes),
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT,
                             ).show()
                         }
+
                         AddUserItemEvent.SaveError -> {
                             Toast.makeText(
                                 ctx,
                                 getString(dev.jagoba.skinholder.R.string.add_item_error_add),
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_LONG,
                             ).show()
                         }
+
                         AddUserItemEvent.Saved -> {
                             if (isAdded) {
                                 parentFragmentManager.setFragmentResult(RESULT_KEY, Bundle.EMPTY)
@@ -140,9 +140,8 @@ class AddUserItemBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_OWNED_IDS = "owned_ids"
         const val TAG = "AddUserItemBottomSheet"
 
-        fun newInstance(ownedIds: List<Int>): AddUserItemBottomSheet =
-            AddUserItemBottomSheet().apply {
-                arguments = Bundle().apply { putIntArray(ARG_OWNED_IDS, ownedIds.toIntArray()) }
-            }
+        fun newInstance(ownedIds: List<Int>): AddUserItemBottomSheet = AddUserItemBottomSheet().apply {
+            arguments = Bundle().apply { putIntArray(ARG_OWNED_IDS, ownedIds.toIntArray()) }
+        }
     }
 }
