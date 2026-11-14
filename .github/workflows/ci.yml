@@ -1,0 +1,64 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+# Cancela ejecuciones antiguas de la misma rama/PR cuando llega un push nuevo.
+concurrency:
+    group: ci-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    format-check:
+        name: Format (Spotless)
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Setup JDK
+              uses: actions/setup-java@v6
+              with:
+                  distribution: temurin
+                  java-version: "17"
+
+            - name: Setup Gradle
+              uses: gradle/actions/setup-gradle@v6
+
+            - name: Check formatting
+              run: ./gradlew spotlessCheck
+
+    build:
+        name: Build and lint
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Setup JDK
+              uses: actions/setup-java@v6
+              with:
+                  distribution: temurin
+                  java-version: "17"
+
+            - name: Setup Gradle
+              uses: gradle/actions/setup-gradle@v6
+
+            # assembleDebug proves it builds, lintDebug is the static-analysis
+            # gate (fails on errors) and assembleRelease proves the release
+            # build still compiles.
+            - name: Build and lint
+              run: ./gradlew assembleDebug lintDebug assembleRelease
+
+            - name: Upload reports on failure
+              if: failure()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: android-reports
+                  path: app/build/reports/
+                  retention-days: 7
