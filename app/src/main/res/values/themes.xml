@@ -41,7 +41,7 @@
         <item name="android:navigationBarColor">@color/nav_bar</item>
 
         <!-- Force dark appearance in both modes -->
-        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
 
         <!-- Bottom Navigation styling -->
         <item name="bottomNavigationStyle">@style/Widget.SkinHolder.BottomNavigation</item>
